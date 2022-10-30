@@ -6,7 +6,7 @@ interface Props {
 }
 
 export function NoteBlock(props: Props) {
-  const [, octave] = props.note;
+  const octave = props.note[1];
 
   return (
     <div

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { Note } from "interface/Note";
 
-import { keyNoteMapping, noteToMidi } from "./const";
+import { keyNoteMapping, noteToMidi } from "components/const";
 import { useAudio } from "hooks";
 
 interface Props {

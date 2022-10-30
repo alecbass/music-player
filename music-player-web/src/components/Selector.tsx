@@ -1,5 +1,5 @@
 import { NoteBlock } from "./SongViewer/NoteBlock";
-import { noteToMidi } from "./KeyBoard/const";
+import { noteToMidi } from "components/const";
 
 interface Props {
   onNoteSelected: (note: string) => void;

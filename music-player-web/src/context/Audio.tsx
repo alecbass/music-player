@@ -6,6 +6,9 @@ import {
   PropsWithChildren,
 } from "react";
 
+import type { Note } from "interface/Note";
+import { noteToMidi } from "components/const";
+
 /**
  * Turns a MIDI key to its result frequency
  * Formula: f = 2**((m - 69) / 12) * 440Hz where m is the given key
@@ -51,7 +54,6 @@ class AudioPlayer {
     this.isPlaying = true;
 
     const frequency = keyToFrequency(key);
-    console.debug(frequency);
 
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = "triangle";
@@ -79,7 +81,36 @@ class AudioPlayer {
           another.disconnect();
         }, i * 1000);
       }
-    } else {
+    }
+  }
+
+  /** Plays an entire song */
+  playSong(notes: Note[]) {
+    console.debug("AudioPlayer::playSong", notes);
+
+    if (this.isPlaying) {
+      this.stopOscillator();
+    }
+
+    this.isPlaying = true;
+
+    const length = 10;
+    const eps = 0.01;
+    this.oscillator = this.audioContext.createOscillator();
+    this.oscillator.type = "sine";
+    this.oscillator.connect(this.audioContext.destination);
+    this.oscillator.start(0);
+
+    let time = this.audioContext.currentTime + eps;
+    for (const note of notes) {
+      const frequency = keyToFrequency(
+        noteToMidi[note.key as keyof typeof noteToMidi]
+      );
+      this.oscillator.frequency.setTargetAtTime(0, time - eps, 0.001);
+      this.oscillator.frequency.setTargetAtTime(frequency, time, 0.001);
+      // time += length / (note.length / 100);
+      time += note.length / 300;
+      console.debug(time);
     }
   }
 
@@ -100,6 +131,7 @@ export interface AudioState {
   start: () => void;
   stop: () => void;
   playNote: (key: number) => void;
+  playSong: (notes: Note[]) => void;
 }
 
 function createState(): AudioState {
@@ -112,6 +144,9 @@ function createState(): AudioState {
       /** Filled in by provider */
     },
     playNote: () => {
+      /** Filled in by provider */
+    },
+    playSong: () => {
       /** Filled in by provider */
     },
   };
@@ -137,22 +172,13 @@ export function AudioContextProvider({ children }: PropsWithChildren<{}>) {
     audioPlayer.current.playSound(key);
   }, []);
 
+  const playSong = useCallback((notes: Note[]) => {
+    audioPlayer.current.playSong(notes);
+  }, []);
+
   return (
-    <Audio.Provider value={{ isPlaying, start, stop, playNote }}>
+    <Audio.Provider value={{ isPlaying, start, stop, playNote, playSong }}>
       {children}
     </Audio.Provider>
   );
 }
-
-// function playTetris() {
-//   getOrCreateContext();
-//   oscillator.start(0);
-//   var time = context.currentTime + eps;
-//   tetris.forEach((note) => {
-//     const freq = Math.pow(2, (note[0] - 69) / 12) * 440;
-//     console.log(time);
-//     oscillator.frequency.setTargetAtTime(0, time - eps, 0.001);
-//     oscillator.frequency.setTargetAtTime(freq, time, 0.001);
-//     time += length / note[1];
-//   });
-// }

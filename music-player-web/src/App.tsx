@@ -5,7 +5,7 @@ import { KeyBoard, Selector, SongViewer } from "components";
 import "./App.css";
 
 function App() {
-  const { notes, setNotes } = useSong();
+  const { notes, setNotes, playSong } = useSong();
 
   function handleKeyboardNoteAdd(note: Note) {
     setNotes((notes) => [...notes, note]);
@@ -18,7 +18,7 @@ function App() {
   return (
     <div id="main">
       <h1>Enter some keys</h1>
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", height: 400 }}>
         <KeyBoard
           notes={notes}
           onNotePlayed={handleKeyboardNoteAdd}
@@ -27,6 +27,7 @@ function App() {
         <SongViewer notes={notes} />
         <Selector onNoteSelected={handleAddManualNote} />
       </div>
+      <button onClick={playSong}>Play song</button>
     </div>
   );
 }

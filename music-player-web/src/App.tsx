@@ -1,24 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+
+import "./App.css";
+
+import { KeyBoard } from "components";
+import { useAudio } from "hooks";
 
 function App() {
+  const audio = useAudio();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div id="main">
+      <KeyBoard playOnPressed />
+      <button disabled={audio.isPlaying} onClick={audio.start}>
+        START
+      </button>
+      <button disabled={!audio.isPlaying} onClick={audio.stop}>
+        STOP
+      </button>
     </div>
   );
 }

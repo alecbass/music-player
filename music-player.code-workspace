@@ -5,6 +5,7 @@
     }
   ],
   "settings": {
-    "typescript.tsdk": "music-player-web/node_modules/typescript/lib"
+    "typescript.tsdk": "music-player-web/node_modules/typescript/lib",
+    "editor.tabSize": 2
   }
 }

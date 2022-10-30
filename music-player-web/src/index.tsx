@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import { AudioContextProvider } from "context/Audio";
+import { SongContextProvider } from "context/Song";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -12,7 +13,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <AudioContextProvider>
-      <App />
+      <SongContextProvider>
+        <App />
+      </SongContextProvider>
     </AudioContextProvider>
   </React.StrictMode>
 );

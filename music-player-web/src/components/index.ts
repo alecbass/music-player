@@ -1,1 +1,2 @@
-export { KeyBoard } from "./KeyBoard";
+export { KeyBoard, Selector } from "./KeyBoard";
+export { SongViewer } from "./SongViewer";

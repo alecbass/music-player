@@ -1,47 +1,61 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { Note } from "interface/Note";
 
-import { NoteBlock } from "./NoteBlock";
-import { keyNoteMapping } from "./const";
+import { keyNoteMapping, noteToMidi } from "./const";
 import { useAudio } from "hooks";
 
 interface Props {
+  notes: Note[];
+  onNotePlayed: (note: Note) => void;
   playOnPressed: boolean;
 }
 
 export function KeyBoard(props: Props) {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const audio = useAudio();
+  const isKeyDown = useRef(false);
+  const pressId = useRef(0);
+  const { playNote, stop } = useAudio();
+  const keyTime = useRef(0);
 
+  const { playOnPressed, notes, onNotePlayed } = props;
   useEffect(() => {
-    function handleKeyUp(e: KeyboardEvent) {
-      const key = keyNoteMapping[e.key as keyof typeof keyNoteMapping];
+    function handleKeyDown(e: KeyboardEvent) {
+      if (isKeyDown.current) {
+        return;
+      }
 
-      if (e.key in keyNoteMapping) {
-        setNotes((notes) => [
-          ...notes,
-          {
-            key,
-            length: 1,
-          },
-        ]);
+      isKeyDown.current = true;
+      keyTime.current = performance.now();
+      pressId.current++;
 
-        if (props.playOnPressed) {
-          audio.playNote(key);
-        }
+      if (e.key in keyNoteMapping && playOnPressed) {
+        playNote(noteToMidi[keyNoteMapping[e.key]]);
       }
     }
 
+    function handleKeyUp(e: KeyboardEvent) {
+      isKeyDown.current = false;
+      const thisPressId = pressId.current;
+      if (e.key in keyNoteMapping) {
+        const timePressed = performance.now() - keyTime.current;
+        onNotePlayed({ key: keyNoteMapping[e.key], length: timePressed });
+
+        setTimeout(() => {
+          if (thisPressId === pressId.current) {
+            // The last keyup event was from the same note, stop playing
+            stop();
+          }
+        }, 100);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
 
     return () => {
+      window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [props.playOnPressed]);
+  }, [playOnPressed, notes, onNotePlayed, playNote, stop]);
 
-  function renderNote(note: Note, index: number) {
-    return <NoteBlock key={index} note={note} />;
-  }
-
-  return <div className="keyboard">{notes.map(renderNote)}</div>;
+  return null;
 }

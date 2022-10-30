@@ -1,4 +1,4 @@
 export interface Note {
-  key: number;
+  key: string;
   length: number;
 }

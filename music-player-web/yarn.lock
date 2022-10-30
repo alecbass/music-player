@@ -8866,6 +8866,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"music-player-wasm@file:../music-player-wasm/pkg::locator=music-player-web%40workspace%3A.":
+  version: 0.1.0
+  resolution: "music-player-wasm@file:../music-player-wasm/pkg#../music-player-wasm/pkg::hash=bdf707&locator=music-player-web%40workspace%3A."
+  checksum: 6ec6ea90242a2544f899faa1e838ca082ce56303e524d952b3235a655d0f76b7f74da39aeef86bcba957e49e301407913457705d801151379fc94d8482908a31
+  languageName: node
+  linkType: hard
+
 "music-player-web@workspace:.":
   version: 0.0.0-use.local
   resolution: "music-player-web@workspace:."
@@ -8879,6 +8886,7 @@ __metadata:
     "@types/react": ^18.0.0
     "@types/react-dom": ^18.0.0
     "@types/webmidi": ^2.0.6
+    music-player-wasm: ../music-player-wasm/pkg
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1

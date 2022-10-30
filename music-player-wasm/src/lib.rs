@@ -4,7 +4,7 @@ use std::{sync::RwLock, thread::*};
 
 extern crate serde;
 
-pub mod piece;
+pub mod note;
 
 #[wasm_bindgen]
 extern "C" {

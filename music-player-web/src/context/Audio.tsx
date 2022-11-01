@@ -20,7 +20,7 @@ function keyToFrequency(key: number) {
 }
 
 class AudioPlayer {
-  audioContext = new AudioContext();
+  audioContext: AudioContext = null!;
   oscillator: OscillatorNode = null!;
   isPlaying = false;
 
@@ -30,6 +30,7 @@ class AudioPlayer {
 
   async initAudio() {
     await window.navigator.requestMIDIAccess();
+    this.audioContext = new AudioContext();
     this.oscillator = this.audioContext.createOscillator();
   }
 

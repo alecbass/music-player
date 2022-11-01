@@ -1,25 +1,23 @@
 # 
-# WASM
-# 
-FROM rust:latest as builder
-
-ADD ./music-player-wasm /app/music-player-wasm
-
-RUN cargo install wasm-pack
-WORKDIR /app/music-player-wasm
-RUN ./build.sh web
-
-# 
 # Frontend
 # 
 FROM node:latest
 
-# Copy compiled WASM from the Rust image
-COPY --from=builder /app/music-player-wasm /app/music-player-wasm
+# Build WASM
+ADD ./install-deps.sh ./install-deps.sh
+RUN ./install-deps.sh
 
-ADD ./music-player-web /app/music-player-web
+ENV PATH /root/.cargo/bin:$PATH
+RUN /bin/bash -c 'source $HOME/.bashrc'
+
+RUN cargo install wasm-pack
+
+ADD ./music-player-wasm /app/music-player-wasm
+WORKDIR /app/music-player-wasm
+RUN ./build.sh web
 
 # Build frontend
+ADD ./music-player-web /app/music-player-web
 WORKDIR /app/music-player-web
 
 RUN yarn set version berry

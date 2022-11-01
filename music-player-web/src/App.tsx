@@ -1,6 +1,7 @@
 import type { Note } from "interface/Note";
 import { useSong } from "hooks";
 import { KeyBoard, Selector, SongViewer } from "components";
+import { eightMelodiesMapped } from "components/const";
 
 import "./App.css";
 
@@ -27,7 +28,16 @@ function App() {
         <SongViewer notes={notes} />
         <Selector onNoteSelected={handleAddManualNote} />
       </div>
-      <button onClick={playSong}>Play song</button>
+      <button disabled={!notes.length} onClick={playSong}>
+        Play song
+      </button>
+      <h3>Selections</h3>
+      <button onClick={() => setNotes(eightMelodiesMapped)}>
+        Eight Melodies (Earthbound Beginnings)
+      </button>
+      <h3>Coming soon...</h3>
+      <span>Harmony - Runescape</span>
+      <span>Feel free to tell me some ideas lol</span>
     </div>
   );
 }

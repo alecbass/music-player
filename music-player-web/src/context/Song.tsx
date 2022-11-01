@@ -9,8 +9,6 @@ import React, {
 import type { Note } from "interface/Note";
 import { Audio } from "./Audio";
 
-import { eightMelodiesMapped } from "components/const";
-
 export interface SongState {
   notes: Note[];
   setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
@@ -34,7 +32,7 @@ export const Song = createContext<SongState>(createState());
 export function SongContextProvider({ children }: PropsWithChildren<{}>) {
   const { playSong: playSongAudio } = useContext(Audio);
 
-  const [notes, setNotes] = useState<Note[]>(eightMelodiesMapped);
+  const [notes, setNotes] = useState<Note[]>([]);
 
   const playSong = useCallback(() => {
     playSongAudio(notes);

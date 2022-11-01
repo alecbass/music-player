@@ -1,12 +1,12 @@
 import type { Note } from "interface/Note";
-import { useSong } from "hooks";
+import { useSong, useWasm } from "hooks";
 import { KeyBoard, Selector, SongViewer } from "components";
 import { eightMelodiesMapped } from "components/const";
-
 import "./App.css";
 
 function App() {
   const { notes, setNotes, playSong } = useSong();
+  const wasm = useWasm();
 
   function handleKeyboardNoteAdd(note: Note) {
     setNotes((notes) => [...notes, note]);
@@ -38,6 +38,7 @@ function App() {
       <h3>Coming soon...</h3>
       <span>Harmony - Runescape</span>
       <span>Feel free to tell me some ideas lol</span>
+      <button onClick={() => wasm.greet("hehe")}>Say hello</button>
     </div>
   );
 }

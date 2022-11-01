@@ -21,3 +21,6 @@ services:
       - type: rewrite
         source: /a/*
         destination: /a
+    envVars:
+      - key: YARN_ENABLE_IMMUTABLE_INSTALLS
+        value: false

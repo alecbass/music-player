@@ -2,7 +2,7 @@ services:
   - type: web
     name: Music Player
     env: static
-    buildCommand: ./build-whole.sh &&
+    buildCommand: ./build-whole.sh
     staticPublishPath: music-player-web/build
     pullRequestPreviewsEnabled: false
     buildFilter:

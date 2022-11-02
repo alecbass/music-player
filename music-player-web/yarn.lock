@@ -8868,8 +8868,8 @@ __metadata:
 
 "music-player-wasm@file:../music-player-wasm/pkg::locator=music-player-web%40workspace%3A.":
   version: 0.1.0
-  resolution: "music-player-wasm@file:../music-player-wasm/pkg#../music-player-wasm/pkg::hash=d0b13c&locator=music-player-web%40workspace%3A."
-  checksum: 68d6d60ebac2957256ab9531b62346dd4dea21c924881b6fc06c4a812f4e0d303b9fb195336342f2180608b10373dc1e95a72f0a902054e5207efef34e0bedb4
+  resolution: "music-player-wasm@file:../music-player-wasm/pkg#../music-player-wasm/pkg::hash=acc836&locator=music-player-web%40workspace%3A."
+  checksum: b15dae1236a608c0f40002034d5f707dc3640cebb4b44fe1c555ebcb58951defad36ca5a031cf551d67bd5af4704a6a169eb7f58ddf953b920c341313481cd7f
   languageName: node
   linkType: hard
 

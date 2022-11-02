@@ -79,62 +79,66 @@ fn my_run() -> Result<bool, ()> {
     debug("RUNNING");
     let window = web_sys::window().expect("no global `window` exists");
 
-    let mut midi_in = MidiInput::new("midir reading input").unwrap();
-    midi_in.ignore(Ignore::None);
+    let mut midi_out = MidiOutput::new("output reader").unwrap();
+    let ports = midi_out.ports();
+    debug(&format!("Out ports: {}", ports.len()));
 
-    // Get an input port
-    let ports = midi_in.ports();
-    let in_port = match &ports[..] {
-        [] => {
-            log("No ports available yet, will try again");
-            return Ok(false);
-        }
-        [ref port] => {
-            log(&format!(
-                "Choosing the only available input port: {}",
-                midi_in.port_name(port).unwrap()
-            ));
-            port
-        }
-        _ => {
-            let mut msg = "Choose an available input port:\n".to_string();
-            for (i, port) in ports.iter().enumerate() {
-                msg.push_str(format!("{}: {}\n", i, midi_in.port_name(port).unwrap()).as_str());
-            }
-            loop {
-                if let Ok(Some(port_str)) = window.prompt_with_message_and_default(&msg, "0") {
-                    if let Ok(port_int) = port_str.parse::<usize>() {
-                        if let Some(port) = &ports.get(port_int) {
-                            break port.clone();
-                        }
-                    }
-                }
-            }
-        }
-    };
+    // let mut midi_in = MidiInput::new("midir reading input").unwrap();
+    // midi_in.ignore(Ignore::None);
 
-    println!("Opening connection");
-    let in_port_name = midi_in.port_name(in_port).unwrap();
+    // // Get an input port
+    // let ports = midi_in.ports();
+    // let in_port = match &ports[..] {
+    //     [] => {
+    //         log("No ports available yet, will try again");
+    //         return Ok(false);
+    //     }
+    //     [ref port] => {
+    //         log(&format!(
+    //             "Choosing the only available input port: {}",
+    //             midi_in.port_name(port).unwrap()
+    //         ));
+    //         port
+    //     }
+    //     _ => {
+    //         let mut msg = "Choose an available input port:\n".to_string();
+    //         for (i, port) in ports.iter().enumerate() {
+    //             msg.push_str(format!("{}: {}\n", i, midi_in.port_name(port).unwrap()).as_str());
+    //         }
+    //         loop {
+    //             if let Ok(Some(port_str)) = window.prompt_with_message_and_default(&msg, "0") {
+    //                 if let Ok(port_int) = port_str.parse::<usize>() {
+    //                     if let Some(port) = &ports.get(port_int) {
+    //                         break port.clone();
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // };
 
-    // _conn_in needs to be a named parameter, because it needs to be kept alive until the end of the scope
-    let _conn_in = midi_in
-        .connect(
-            in_port,
-            "midir-read-input",
-            move |stamp, message, _| {
-                println!("{}: {:?} (len = {})", stamp, message, message.len());
-            },
-            (),
-        )
-        .unwrap();
+    // println!("Opening connection");
+    // let in_port_name = midi_in.port_name(in_port).unwrap();
 
-    log(&format!(
-        "Connection open, reading input from '{}'",
-        in_port_name
-    ));
-    Box::leak(Box::new(_conn_in));
+    // // _conn_in needs to be a named parameter, because it needs to be kept alive until the end of the scope
+    // let _conn_in = midi_in
+    //     .connect(
+    //         in_port,
+    //         "midir-read-input",
+    //         move |stamp, message, _| {
+    //             println!("{}: {:?} (len = {})", stamp, message, message.len());
+    //         },
+    //         (),
+    //     )
+    //     .unwrap();
 
-    debug("DONEEEE");
+    // log(&format!(
+    //     "Connection open, reading input from '{}'",
+    //     in_port_name
+    // ));
+    // Box::leak(Box::new(_conn_in));
+
+    // debug("DONEEEE");
     Ok(true)
 }
 
@@ -193,8 +197,13 @@ fn my_run() -> Result<bool, ()> {
 //     Ok(true)
 // }
 
-use midi::note_on;
+use midi::{combine_notes, note_on};
 #[wasm_bindgen]
 pub fn on_note(channel: u8, key: u8) -> Vec<u8> {
     note_on(channel, key)
+}
+
+#[wasm_bindgen]
+pub fn combine_all_notes(channel: u8, notes: &[u8]) -> Vec<u8> {
+    combine_notes(channel, notes)
 }

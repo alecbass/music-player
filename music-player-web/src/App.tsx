@@ -25,6 +25,8 @@ function App() {
   }
 
   function doWasmStuff() {
+    wasm.start("hi");
+    return;
     // const r = wasm.start("hehehe");
     console.debug(
       wasm.on_note(
@@ -32,6 +34,26 @@ function App() {
         noteToMidi[eightMelodiesMapped[5].key as keyof typeof noteToMidi]
       )
     );
+
+    const hehe = wasm.combine_all_notes(
+      1,
+      new Uint8Array(
+        notes.map((n) => noteToMidi[n.key as keyof typeof noteToMidi])
+      )
+    );
+
+    const file = new File(
+      [new Blob([hehe.buffer], { type: "audio/midi" })],
+      "test.mid"
+    );
+    const url = URL.createObjectURL(file);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(url);
+    a.remove();
   }
 
   return (

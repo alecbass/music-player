@@ -18,6 +18,11 @@ function App() {
     setNotes((notes) => [...notes, { key: note, length: 1000 }]);
   }
 
+  function doWasmStuff() {
+    const r = wasm.start("hehehe");
+    console.debug(r);
+  }
+
   return (
     <div id="main">
       <h1>Enter some keys</h1>
@@ -40,7 +45,7 @@ function App() {
       <h3>Coming soon...</h3>
       <span>Harmony - Runescape</span>
       <span>Feel free to tell me some ideas lol</span>
-      <button onClick={() => wasm.greet("hehe")}>Say hello</button>
+      <button onClick={doWasmStuff}>Say hello</button>
 
       {!hasPermission && <Intro onAccept={requestPermission} />}
     </div>

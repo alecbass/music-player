@@ -173,6 +173,9 @@ export function AudioContextProvider({ children }: PropsWithChildren<{}>) {
       name: "midi" as PermissionName,
     });
     setHasMIDIPermission(access.state === "granted");
+    if (access.state === "granted") {
+      audioPlayer.current = new AudioPlayer();
+    }
   }, []);
 
   useEffect(() => {
@@ -199,8 +202,7 @@ export function AudioContextProvider({ children }: PropsWithChildren<{}>) {
   }, []);
 
   const requestPermission = useCallback(async () => {
-    await navigator.requestMIDIAccess();
-    checkMidiAccess();
+    navigator.requestMIDIAccess().then(checkMidiAccess);
   }, [checkMidiAccess]);
 
   return (

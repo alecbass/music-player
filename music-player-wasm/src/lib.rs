@@ -6,9 +6,11 @@ use web_sys::console;
 
 extern crate js_sys;
 extern crate midir;
+extern crate midly;
 extern crate serde;
 extern crate web_sys;
 
+pub mod midi;
 pub mod note;
 
 #[wasm_bindgen]
@@ -190,3 +192,9 @@ fn my_run() -> Result<bool, ()> {
 //     Box::leak(Box::new(_conn_in));
 //     Ok(true)
 // }
+
+use midi::note_on;
+#[wasm_bindgen]
+pub fn on_note(channel: u8, key: u8) -> Vec<u8> {
+    note_on(channel, key)
+}

@@ -1,7 +1,7 @@
 import type { Note } from "interface/Note";
 import { useAudio, useSong, useWasm } from "hooks";
 import { KeyBoard, Selector, SongViewer, Intro } from "components";
-import { eightMelodiesMapped } from "components/const";
+import { eightMelodiesMapped, noteToMidi } from "components/const";
 import "./App.css";
 
 function App() {
@@ -12,6 +12,12 @@ function App() {
 
   function handleKeyboardNoteAdd(note: Note) {
     setNotes((notes) => [...notes, note]);
+    // TODO(alec): Got a result of midly here
+    const result = wasm.on_note(
+      1,
+      noteToMidi[note.key as keyof typeof noteToMidi]
+    );
+    console.debug(result);
   }
 
   function handleAddManualNote(note: string) {
@@ -19,8 +25,13 @@ function App() {
   }
 
   function doWasmStuff() {
-    const r = wasm.start("hehehe");
-    console.debug(r);
+    // const r = wasm.start("hehehe");
+    console.debug(
+      wasm.on_note(
+        1,
+        noteToMidi[eightMelodiesMapped[5].key as keyof typeof noteToMidi]
+      )
+    );
   }
 
   return (

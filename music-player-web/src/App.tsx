@@ -1,10 +1,12 @@
 import type { Note } from "interface/Note";
-import { useSong, useWasm } from "hooks";
-import { KeyBoard, Selector, SongViewer } from "components";
+import { useAudio, useSong, useWasm } from "hooks";
+import { KeyBoard, Selector, SongViewer, Intro } from "components";
 import { eightMelodiesMapped } from "components/const";
 import "./App.css";
 
 function App() {
+  // Null if check has not been finalised, otherwise true
+  const { hasPermission, requestPermission } = useAudio();
   const { notes, setNotes, playSong } = useSong();
   const wasm = useWasm();
 
@@ -39,6 +41,8 @@ function App() {
       <span>Harmony - Runescape</span>
       <span>Feel free to tell me some ideas lol</span>
       <button onClick={() => wasm.greet("hehe")}>Say hello</button>
+
+      {!hasPermission && <Intro onAccept={requestPermission} />}
     </div>
   );
 }

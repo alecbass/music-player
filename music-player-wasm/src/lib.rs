@@ -1,14 +1,25 @@
 use wasm_bindgen::prelude::*;
 
-use std::{sync::RwLock, thread::*};
+use midir::{Ignore, MidiInput, MidiOutput};
+use std::sync::{Arc, Mutex, RwLock};
+use web_sys::console;
 
+extern crate js_sys;
+extern crate midir;
+extern crate midly;
 extern crate serde;
+extern crate web_sys;
 
+pub mod midi;
 pub mod note;
 
 #[wasm_bindgen]
 extern "C" {
     pub fn alert(s: &str);
+    #[wasm_bindgen(js_namespace = console)]
+    pub fn log(msg: &str);
+    #[wasm_bindgen(js_namespace = console)]
+    pub fn debug(msg: &str);
 }
 
 #[wasm_bindgen]
@@ -37,4 +48,171 @@ pub fn thread_stuff() -> i32 {
     alert("Exited thread breeheheee");
 
     return 5;
+}
+
+#[wasm_bindgen]
+pub fn start(msg: &str) -> u8 {
+    // let token_outer = Arc::new(Mutex::new(None));
+    // let token = token_outer.clone();
+
+    my_run().expect("oh no");
+    // let closure: Closure<dyn FnMut()> = Closure::wrap(Box::new(move || {
+    //     if run().unwrap() == true {
+    //         if let Some(token) = *token.lock().unwrap() {
+    //             web_sys::window().unwrap().clear_interval_with_handle(token);
+    //         }
+    //     }
+    // }));
+    // *token_outer.lock().unwrap() = web_sys::window()
+    //     .unwrap()
+    //     .set_interval_with_callback_and_timeout_and_arguments_0(
+    //         closure.as_ref().unchecked_ref(),
+    //         200,
+    //     )
+    //     .ok();
+    // closure.forget();
+
+    5
+}
+
+fn my_run() -> Result<bool, ()> {
+    debug("RUNNING");
+    let window = web_sys::window().expect("no global `window` exists");
+
+    let mut midi_out = MidiOutput::new("output reader").unwrap();
+    let ports = midi_out.ports();
+    debug(&format!("Out ports: {}", ports.len()));
+
+    // let mut midi_in = MidiInput::new("midir reading input").unwrap();
+    // midi_in.ignore(Ignore::None);
+
+    // // Get an input port
+    // let ports = midi_in.ports();
+    // let in_port = match &ports[..] {
+    //     [] => {
+    //         log("No ports available yet, will try again");
+    //         return Ok(false);
+    //     }
+    //     [ref port] => {
+    //         log(&format!(
+    //             "Choosing the only available input port: {}",
+    //             midi_in.port_name(port).unwrap()
+    //         ));
+    //         port
+    //     }
+    //     _ => {
+    //         let mut msg = "Choose an available input port:\n".to_string();
+    //         for (i, port) in ports.iter().enumerate() {
+    //             msg.push_str(format!("{}: {}\n", i, midi_in.port_name(port).unwrap()).as_str());
+    //         }
+    //         loop {
+    //             if let Ok(Some(port_str)) = window.prompt_with_message_and_default(&msg, "0") {
+    //                 if let Ok(port_int) = port_str.parse::<usize>() {
+    //                     if let Some(port) = &ports.get(port_int) {
+    //                         break port.clone();
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // };
+
+    // println!("Opening connection");
+    // let in_port_name = midi_in.port_name(in_port).unwrap();
+
+    // // _conn_in needs to be a named parameter, because it needs to be kept alive until the end of the scope
+    // let _conn_in = midi_in
+    //     .connect(
+    //         in_port,
+    //         "midir-read-input",
+    //         move |stamp, message, _| {
+    //             println!("{}: {:?} (len = {})", stamp, message, message.len());
+    //         },
+    //         (),
+    //     )
+    //     .unwrap();
+
+    // log(&format!(
+    //     "Connection open, reading input from '{}'",
+    //     in_port_name
+    // ));
+    // Box::leak(Box::new(_conn_in));
+
+    // debug("DONEEEE");
+    Ok(true)
+}
+
+// fn run() -> Result<bool, Box<dyn Error>> {
+//     let window = web_sys::window().expect("no global `window` exists");
+
+//     let mut midi_in = MidiInput::new("midir reading input")?;
+//     midi_in.ignore(Ignore::None);
+
+//     // Get an input port
+//     let ports = midi_in.ports();
+//     let in_port = match &ports[..] {
+//         [] => {
+//             println!("No ports available yet, will try again");
+//             return Ok(false);
+//         }
+//         [ref port] => {
+//             println!(
+//                 "Choosing the only available input port: {}",
+//                 midi_in.port_name(port).unwrap()
+//             );
+//             port
+//         }
+//         _ => {
+//             let mut msg = "Choose an available input port:\n".to_string();
+//             for (i, port) in ports.iter().enumerate() {
+//                 msg.push_str(format!("{}: {}\n", i, midi_in.port_name(port).unwrap()).as_str());
+//             }
+//             loop {
+//                 if let Ok(Some(port_str)) = window.prompt_with_message_and_default(&msg, "0") {
+//                     if let Ok(port_int) = port_str.parse::<usize>() {
+//                         if let Some(port) = &ports.get(port_int) {
+//                             break port.clone();
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     };
+
+//     println!("Opening connection");
+//     let in_port_name = midi_in.port_name(in_port)?;
+
+//     // _conn_in needs to be a named parameter, because it needs to be kept alive until the end of the scope
+//     let _conn_in = midi_in.connect(
+//         in_port,
+//         "midir-read-input",
+//         move |stamp, message, _| {
+//             println!("{}: {:?} (len = {})", stamp, message, message.len());
+//         },
+//         (),
+//     )?;
+
+//     println!("Connection open, reading input from '{}'", in_port_name);
+//     Box::leak(Box::new(_conn_in));
+//     Ok(true)
+// }
+
+use crate::note::Note;
+use midi::{combine_notes, note_on};
+#[wasm_bindgen]
+pub fn on_note(channel: u8, key: u8) -> Vec<u8> {
+    note_on(channel, key)
+}
+
+#[wasm_bindgen]
+pub fn combine_all_notes(channel: u8, notes: JsValue, tempo: u16) -> Vec<u8> {
+    let notes: Vec<Note> = match serde_wasm_bindgen::from_value(notes) {
+        Ok(n) => n,
+        Err(e) => {
+            log(&format!("Error: {:?}", e));
+            return Vec::new();
+        }
+    };
+
+    combine_notes(channel, notes, tempo)
 }

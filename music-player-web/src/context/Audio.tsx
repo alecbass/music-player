@@ -4,6 +4,7 @@ import {
   useState,
   useRef,
   PropsWithChildren,
+  useEffect,
 } from "react";
 
 import type { Note } from "interface/Note";
@@ -20,7 +21,7 @@ function keyToFrequency(key: number) {
 }
 
 class AudioPlayer {
-  audioContext = new AudioContext();
+  audioContext: AudioContext = null!;
   oscillator: OscillatorNode = null!;
   isPlaying = false;
 
@@ -29,7 +30,7 @@ class AudioPlayer {
   }
 
   async initAudio() {
-    await window.navigator.requestMIDIAccess();
+    this.audioContext = new AudioContext();
     this.oscillator = this.audioContext.createOscillator();
   }
 
@@ -128,15 +129,19 @@ class AudioPlayer {
 
 export interface AudioState {
   isPlaying: boolean;
+  /** If MIDI audio is allowed to be played */
+  hasPermission: boolean | null;
   start: () => void;
   stop: () => void;
   playNote: (key: number) => void;
   playSong: (notes: Note[]) => void;
+  requestPermission: () => void;
 }
 
 function createState(): AudioState {
   return {
     isPlaying: true,
+    hasPermission: false,
     start: () => {
       /** Filled in by provider */
     },
@@ -149,14 +154,34 @@ function createState(): AudioState {
     playSong: () => {
       /** Filled in by provider */
     },
+    requestPermission: () => {
+      /** Filled in by provider */
+    },
   };
 }
 
 export const Audio = createContext<AudioState>(createState());
 
 export function AudioContextProvider({ children }: PropsWithChildren<{}>) {
-  const audioPlayer = useRef(new AudioPlayer());
+  const audioPlayer = useRef<AudioPlayer>(null!);
   const [isPlaying, setIsPlaying] = useState(false);
+  // Null to begin with, true if has permission and false otherwise
+  const [hasPermission, setHasMIDIPermission] = useState<boolean | null>(null);
+
+  const checkMidiAccess = useCallback(async () => {
+    const access = await navigator.permissions.query({
+      name: "midi" as PermissionName,
+    });
+    setHasMIDIPermission(access.state === "granted");
+    if (access.state === "granted") {
+      audioPlayer.current = new AudioPlayer();
+    }
+  }, []);
+
+  useEffect(() => {
+    // Check initial permissions
+    checkMidiAccess();
+  }, [checkMidiAccess]);
 
   const start = useCallback(() => {
     setIsPlaying(true);
@@ -176,8 +201,22 @@ export function AudioContextProvider({ children }: PropsWithChildren<{}>) {
     audioPlayer.current.playSong(notes);
   }, []);
 
+  const requestPermission = useCallback(async () => {
+    navigator.requestMIDIAccess().then(checkMidiAccess);
+  }, [checkMidiAccess]);
+
   return (
-    <Audio.Provider value={{ isPlaying, start, stop, playNote, playSong }}>
+    <Audio.Provider
+      value={{
+        isPlaying,
+        hasPermission,
+        start,
+        stop,
+        playNote,
+        playSong,
+        requestPermission,
+      }}
+    >
       {children}
     </Audio.Provider>
   );

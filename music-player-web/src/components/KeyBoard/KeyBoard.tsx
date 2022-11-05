@@ -7,7 +7,7 @@ import { useAudio } from "hooks";
 interface Props {
   notes: Note[];
   onNotePlayed: (note: Note) => void;
-  playOnPressed: boolean;
+  playOnPressed?: boolean;
 }
 
 export function KeyBoard(props: Props) {
@@ -27,9 +27,9 @@ export function KeyBoard(props: Props) {
       keyTime.current = performance.now();
       pressId.current++;
 
-      if (e.key in keyNoteMapping && playOnPressed) {
-        playNote(noteToMidi[keyNoteMapping[e.key]]);
-      }
+      // if (e.key in keyNoteMapping && playOnPressed) {
+      //   playNote(noteToMidi[keyNoteMapping[e.key]]);
+      // }
     }
 
     function handleKeyUp(e: KeyboardEvent) {
@@ -39,12 +39,12 @@ export function KeyBoard(props: Props) {
         const timePressed = performance.now() - keyTime.current;
         onNotePlayed({ key: keyNoteMapping[e.key], length: timePressed });
 
-        setTimeout(() => {
-          if (thisPressId === pressId.current) {
-            // The last keyup event was from the same note, stop playing
-            stop();
-          }
-        }, 100);
+        // setTimeout(() => {
+        //   if (thisPressId === pressId.current) {
+        //     // The last keyup event was from the same note, stop playing
+        //     stop();
+        //   }
+        // }, 100);
       }
     }
 

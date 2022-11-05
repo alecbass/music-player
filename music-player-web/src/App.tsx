@@ -1,16 +1,16 @@
 import { useRef, useState } from "react";
-import MidiPlayer from "midi-player-js";
-import Soundfont from "soundfont-player";
 
 import type { Note } from "interface/Note";
 import { useAudio, useSong, useWasm } from "hooks";
 import { KeyBoard, Selector, SongViewer, Intro } from "components";
 import { eightMelodiesMapped, noteToMidi } from "components/const";
+import { bytesToMidiFile, downloadFile } from "utils";
+import { MusicPlayer } from "player";
+
 import "./App.css";
-import { downloadFile } from "utils";
 
 const DEFAULT_TEMPO = 144;
-let player = new MidiPlayer.Player();
+const player = new MusicPlayer();
 
 function App() {
   // Null if check has not been finalised, otherwise true
@@ -22,11 +22,20 @@ function App() {
 
   function handleKeyboardNoteAdd(note: Note) {
     setNotes((notes) => [...notes, note]);
-    // TODO(alec): Got a result of midly here
-    const result = wasm.on_note(
+    const bytes = wasm.on_note(
       1,
-      noteToMidi[note.key as keyof typeof noteToMidi]
+      {
+        key: noteToMidi[note.key as keyof typeof noteToMidi],
+        length: Math.floor(note.length),
+      },
+      tempoInputRef.current?.valueAsNumber ?? DEFAULT_TEMPO
     );
+
+    const file = bytesToMidiFile(bytes);
+
+    player.stop();
+    player.setSource(file);
+    player.play();
   }
 
   function handleAddManualNote(note: string) {
@@ -45,51 +54,15 @@ function App() {
       tempoInputRef.current?.valueAsNumber ?? DEFAULT_TEMPO
     );
 
-    const midiFile = new File(
-      [new Blob([midiFileBytes.buffer], { type: "audio/midi" })],
-      "test.mid"
-    );
+    const midiFile = bytesToMidiFile(midiFileBytes);
     setMidiFile(midiFile);
 
-    const audioContext = new AudioContext();
-    const instrument = await Soundfont.instrument(audioContext, "kalimba");
-
-    const reader = new FileReader();
-    reader.addEventListener("load", (e) => {
-      player = new MidiPlayer.Player((event: MidiPlayer.Event) => {
-        if (event.name === "Note on") {
-          instrument.play(event.noteName!, audioContext.currentTime, {
-            gain: event.velocity! / 100,
-          });
-        }
-      });
-
-      const result = e.target?.result;
-
-      if (!result) {
-        return;
-      }
-
-      player.loadArrayBuffer(result as ArrayBuffer);
-      player.play();
-    });
-
-    reader.readAsArrayBuffer(midiFile);
+    player.setSource(midiFile);
+    player.play();
   }
 
   async function loadDataUri(dataUri: string) {
-    const audioContext = new AudioContext();
-
-    const instrument = await Soundfont.instrument(audioContext, "banjo");
-    player = new MidiPlayer.Player((event: MidiPlayer.Event) => {
-      if (event.name === "Note on" && event.velocity! > 0) {
-        instrument.play(event.noteName!, audioContext.currentTime, {
-          gain: event.velocity! / 100,
-        });
-      }
-    });
-
-    player.loadDataUri(dataUri);
+    const player = new MusicPlayer(dataUri, "koto");
     player.play();
   }
 
@@ -103,11 +76,7 @@ function App() {
     <div id="main">
       <h1>Enter some keys</h1>
       <div style={{ display: "flex", height: 400 }}>
-        <KeyBoard
-          notes={notes}
-          onNotePlayed={handleKeyboardNoteAdd}
-          playOnPressed
-        />
+        <KeyBoard notes={notes} onNotePlayed={handleKeyboardNoteAdd} />
         <SongViewer notes={notes} />
         <Selector onNoteSelected={handleAddManualNote} />
       </div>

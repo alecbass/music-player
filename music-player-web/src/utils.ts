@@ -8,3 +8,10 @@ export function downloadFile(file: File) {
   URL.revokeObjectURL(url);
   a.remove();
 }
+
+export function bytesToMidiFile(bytes: Uint8Array) {
+  return new File(
+    [new Blob([bytes.buffer], { type: "audio/midi" })],
+    "test.mid"
+  );
+}

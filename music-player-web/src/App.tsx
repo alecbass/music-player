@@ -6,16 +6,17 @@ import { useAudio, useSong, useWasm } from "hooks";
 import { KeyBoard, Selector, SongViewer, Intro } from "components";
 import { eightMelodiesMapped, noteToMidi } from "components/const";
 import "./App.css";
-import React, { useMemo, useState } from "react";
+import { useRef } from "react";
 
+const DEFAULT_TEMPO = 144;
 let player = new MidiPlayer.Player();
 
 function App() {
   // Null if check has not been finalised, otherwise true
   const { hasPermission, requestPermission } = useAudio();
   const { notes, setNotes, playSong } = useSong();
-  const [file, setFile] = useState<File | null>(null);
   const wasm = useWasm();
+  const tempoInputRef = useRef<HTMLInputElement | null>(null);
 
   function handleKeyboardNoteAdd(note: Note) {
     setNotes((notes) => [...notes, note]);
@@ -32,22 +33,17 @@ function App() {
   }
 
   async function doWasmStuff() {
-    if (!file) {
-      return;
-    }
-
     const toCombine = notes.map((n) => ({
       key: noteToMidi[n.key as keyof typeof noteToMidi],
-      length: n.length,
+      length: Math.floor(n.length),
     }));
 
     const hehe = wasm.combine_all_notes(
       1,
       // notes.map((n) => noteToMidi[n.key as keyof typeof noteToMidi] )
-      toCombine
+      toCombine,
+      tempoInputRef.current?.valueAsNumber ?? DEFAULT_TEMPO
     );
-
-    // const hehe = new Uint8Array(await file.arrayBuffer());
 
     const newFile = new File(
       [new Blob([hehe.buffer], { type: "audio/midi" })],
@@ -65,7 +61,7 @@ function App() {
     // const buffer = await file.arrayBuffer();
 
     const audioContext = new AudioContext();
-    const instrument = await Soundfont.instrument(audioContext, "accordion");
+    const instrument = await Soundfont.instrument(audioContext, "banjo");
 
     const reader = new FileReader();
     reader.addEventListener("load", (e) => {
@@ -90,48 +86,11 @@ function App() {
     reader.readAsArrayBuffer(newFile);
   }
 
-  async function loadFile() {
-    player.stop();
-
-    if (!file) {
-      return;
-    }
-
-    var reader = new FileReader();
-
-    const audioContext = new AudioContext();
-
-    const instrument = await Soundfont.instrument(audioContext, "banjo");
-
-    reader.addEventListener(
-      "load",
-      (e) => {
-        player = new MidiPlayer.Player((event: MidiPlayer.Event) => {
-          console.debug(event);
-          if (event.name === "Note on") {
-            instrument.play(event.noteName!, audioContext.currentTime, {
-              gain: event.velocity! / 100,
-            });
-          }
-        });
-
-        console.debug(e.target?.result);
-        player.loadArrayBuffer(e.target?.result as ArrayBuffer);
-
-        player.play();
-      },
-      false
-    );
-
-    reader.readAsArrayBuffer(file);
-  }
-
   async function loadDataUri(dataUri: string) {
     const audioContext = new AudioContext();
 
     const instrument = await Soundfont.instrument(audioContext, "banjo");
     player = new MidiPlayer.Player((event: MidiPlayer.Event) => {
-      console.debug(event);
       if (event.name === "Note on" && event.velocity! > 0) {
         instrument.play(event.noteName!, audioContext.currentTime, {
           gain: event.velocity! / 100,
@@ -140,23 +99,13 @@ function App() {
     });
 
     player.loadDataUri(dataUri);
-
-    console.debug("Playing", dataUri);
     player.play();
-  }
-
-  function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const { files } = e.target;
-    if (files?.length) {
-      const [file] = files;
-      setFile(file);
-    }
   }
 
   return (
     <div id="main">
       <h1>Enter some keys</h1>
-      {/* <div style={{ display: "flex", height: 400 }}>
+      <div style={{ display: "flex", height: 400 }}>
         <KeyBoard
           notes={notes}
           onNotePlayed={handleKeyboardNoteAdd}
@@ -164,23 +113,28 @@ function App() {
         />
         <SongViewer notes={notes} />
         <Selector onNoteSelected={handleAddManualNote} />
-      </div> */}
-      <button disabled={!notes.length} onClick={playSong}>
-        Play song
-      </button>
+      </div>
+
+      <div style={{ display: "flex" }}>
+        <label>Tempo:</label>
+        <input ref={tempoInputRef} type="number" defaultValue={DEFAULT_TEMPO} />
+      </div>
+
       <h3>Selections</h3>
       <button onClick={() => setNotes(eightMelodiesMapped)}>
         Eight Melodies (Earthbound Beginnings)
       </button>
+      <button disabled={!notes.length} onClick={doWasmStuff}>
+        Generate and play MIDI
+      </button>
       <h3>Coming soon...</h3>
       <span>Harmony - Runescape</span>
       <span>Feel free to tell me some ideas lol</span>
-      <button onClick={doWasmStuff}>Generate MIDI</button>
-      <input type="file" onChange={handleFileUpload} />
-      <button disabled={!file} onClick={loadFile}>
-        Play file
-      </button>
+
+      <br />
+      <h3>Misc</h3>
       <button onClick={() => loadDataUri(mario)}>Play mario</button>
+      <button onClick={() => loadDataUri(zelda)}>Play Zelda :DD</button>
 
       {!hasPermission && <Intro onAccept={requestPermission} />}
     </div>

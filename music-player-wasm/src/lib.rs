@@ -205,7 +205,7 @@ pub fn on_note(channel: u8, key: u8) -> Vec<u8> {
 }
 
 #[wasm_bindgen]
-pub fn combine_all_notes(channel: u8, notes: JsValue) -> Vec<u8> {
+pub fn combine_all_notes(channel: u8, notes: JsValue, tempo: u16) -> Vec<u8> {
     let notes: Vec<Note> = match serde_wasm_bindgen::from_value(notes) {
         Ok(n) => n,
         Err(e) => {
@@ -213,6 +213,6 @@ pub fn combine_all_notes(channel: u8, notes: JsValue) -> Vec<u8> {
             return Vec::new();
         }
     };
-    log(&format!("Real notes: {:?}", notes));
-    combine_notes(channel, notes)
+
+    combine_notes(channel, notes, tempo)
 }

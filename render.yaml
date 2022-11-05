@@ -24,3 +24,4 @@ services:
     envVars:
       - key: YARN_ENABLE_IMMUTABLE_INSTALLS
         value: false
+    autoDeploy: true

@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import MidiPlayer from "midi-player-js";
 import Soundfont from "soundfont-player";
 
@@ -6,7 +7,7 @@ import { useAudio, useSong, useWasm } from "hooks";
 import { KeyBoard, Selector, SongViewer, Intro } from "components";
 import { eightMelodiesMapped, noteToMidi } from "components/const";
 import "./App.css";
-import { useRef } from "react";
+import { downloadFile } from "utils";
 
 const DEFAULT_TEMPO = 144;
 let player = new MidiPlayer.Player();
@@ -17,6 +18,7 @@ function App() {
   const { notes, setNotes, playSong } = useSong();
   const wasm = useWasm();
   const tempoInputRef = useRef<HTMLInputElement | null>(null);
+  const [midiFile, setMidiFile] = useState<File | null>(null);
 
   function handleKeyboardNoteAdd(note: Note) {
     setNotes((notes) => [...notes, note]);
@@ -25,7 +27,6 @@ function App() {
       1,
       noteToMidi[note.key as keyof typeof noteToMidi]
     );
-    console.debug(result);
   }
 
   function handleAddManualNote(note: string) {
@@ -38,30 +39,20 @@ function App() {
       length: Math.floor(n.length),
     }));
 
-    const hehe = wasm.combine_all_notes(
+    const midiFileBytes = wasm.combine_all_notes(
       1,
-      // notes.map((n) => noteToMidi[n.key as keyof typeof noteToMidi] )
       toCombine,
       tempoInputRef.current?.valueAsNumber ?? DEFAULT_TEMPO
     );
 
-    const newFile = new File(
-      [new Blob([hehe.buffer], { type: "audio/midi" })],
+    const midiFile = new File(
+      [new Blob([midiFileBytes.buffer], { type: "audio/midi" })],
       "test.mid"
     );
-    // const url = URL.createObjectURL(file);
-    // const a = document.createElement("a");
-    // a.href = url;
-    // a.download = file.name;
-    // document.body.appendChild(a);
-    // a.click();
-    // URL.revokeObjectURL(url);
-    // a.remove();
-
-    // const buffer = await file.arrayBuffer();
+    setMidiFile(midiFile);
 
     const audioContext = new AudioContext();
-    const instrument = await Soundfont.instrument(audioContext, "banjo");
+    const instrument = await Soundfont.instrument(audioContext, "kalimba");
 
     const reader = new FileReader();
     reader.addEventListener("load", (e) => {
@@ -83,7 +74,7 @@ function App() {
       player.play();
     });
 
-    reader.readAsArrayBuffer(newFile);
+    reader.readAsArrayBuffer(midiFile);
   }
 
   async function loadDataUri(dataUri: string) {
@@ -100,6 +91,12 @@ function App() {
 
     player.loadDataUri(dataUri);
     player.play();
+  }
+
+  function handleDownloadFile() {
+    if (midiFile) {
+      downloadFile(midiFile);
+    }
   }
 
   return (
@@ -126,6 +123,9 @@ function App() {
       </button>
       <button disabled={!notes.length} onClick={doWasmStuff}>
         Generate and play MIDI
+      </button>
+      <button disabled={!midiFile} onClick={handleDownloadFile}>
+        Download your MIDI file
       </button>
       <h3>Coming soon...</h3>
       <span>Harmony - Runescape</span>

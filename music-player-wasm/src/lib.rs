@@ -197,6 +197,7 @@ fn my_run() -> Result<bool, ()> {
 //     Ok(true)
 // }
 
+use crate::note::Note;
 use midi::{combine_notes, note_on};
 #[wasm_bindgen]
 pub fn on_note(channel: u8, key: u8) -> Vec<u8> {
@@ -204,6 +205,14 @@ pub fn on_note(channel: u8, key: u8) -> Vec<u8> {
 }
 
 #[wasm_bindgen]
-pub fn combine_all_notes(channel: u8, notes: &[u8]) -> Vec<u8> {
+pub fn combine_all_notes(channel: u8, notes: JsValue) -> Vec<u8> {
+    let notes: Vec<Note> = match serde_wasm_bindgen::from_value(notes) {
+        Ok(n) => n,
+        Err(e) => {
+            log(&format!("Error: {:?}", e));
+            return Vec::new();
+        }
+    };
+    log(&format!("Real notes: {:?}", notes));
     combine_notes(channel, notes)
 }

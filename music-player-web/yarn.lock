@@ -3434,6 +3434,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"adsr@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "adsr@npm:1.0.1"
+  checksum: 7815509685cb99178f4164d73d133ca0a8f9ff3b891a2ef30fcdd278c8df49a84ee21e8fc01078b2ca89a88a1159bf3d7d241c1c83f517b2078e1ee3017648e2
+  languageName: node
+  linkType: hard
+
 "agent-base@npm:6, agent-base@npm:^6.0.2":
   version: 6.0.2
   resolution: "agent-base@npm:6.0.2"
@@ -3758,6 +3765,13 @@ __metadata:
   version: 1.0.0
   resolution: "at-least-node@npm:1.0.0"
   checksum: 463e2f8e43384f1afb54bc68485c436d7622acec08b6fad269b421cb1d29cebb5af751426793d0961ed243146fe4dc983402f6d5a51b720b277818dbf6f2e49e
+  languageName: node
+  linkType: hard
+
+"audio-loader@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "audio-loader@npm:0.5.0"
+  checksum: 4652a2377ff7a2cc579e726f2f7e1759e8b68c2c53b2110d12c68dca662b93bf02e5f303a3fc4154b302ce79982c9cae88878986c7fb0b5580a33daaa1e3eef1
   languageName: node
   linkType: hard
 
@@ -8652,6 +8666,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"midi-player-js@npm:^2.0.16":
+  version: 2.0.16
+  resolution: "midi-player-js@npm:2.0.16"
+  checksum: c192ab3fea2c57ed7ac7e37ea8a15851ab92eabbca915a354b9ea2af1f395010f1ed5e7b82feec924f92678224bd753f387fe70bdbe8b6ad9bd3d11bbbe0ab49
+  languageName: node
+  linkType: hard
+
+"midimessage@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "midimessage@npm:1.0.5"
+  checksum: 1cfe1c8997e2b298851f0b43b2e9a01d7485f9cbc76da0e77e28480538b54b067539e82f08a8dae0ce2072533881513419565903d92d1f098ed759dc7c10fbc1
+  languageName: node
+  linkType: hard
+
 "mime-db@npm:1.52.0, mime-db@npm:>= 1.43.0 < 2":
   version: 1.52.0
   resolution: "mime-db@npm:1.52.0"
@@ -8868,8 +8896,8 @@ __metadata:
 
 "music-player-wasm@file:../music-player-wasm/pkg::locator=music-player-web%40workspace%3A.":
   version: 0.1.0
-  resolution: "music-player-wasm@file:../music-player-wasm/pkg#../music-player-wasm/pkg::hash=acc836&locator=music-player-web%40workspace%3A."
-  checksum: b15dae1236a608c0f40002034d5f707dc3640cebb4b44fe1c555ebcb58951defad36ca5a031cf551d67bd5af4704a6a169eb7f58ddf953b920c341313481cd7f
+  resolution: "music-player-wasm@file:../music-player-wasm/pkg#../music-player-wasm/pkg::hash=884db3&locator=music-player-web%40workspace%3A."
+  checksum: 3cf3a74aa0ffb414133b94ebf0f8c99a2753dc3bfbd4a44445c8709f8ad7b4c9300068a45645d55b116e7a4488920c92748372f2e951348a7f9444466c932f59
   languageName: node
   linkType: hard
 
@@ -8886,11 +8914,13 @@ __metadata:
     "@types/react": ^18.0.0
     "@types/react-dom": ^18.0.0
     "@types/webmidi": ^2.0.6
+    midi-player-js: ^2.0.16
     music-player-wasm: ../music-player-wasm/pkg
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1
-    typescript: ^4.4.2
+    soundfont-player: ^0.12.0
+    typescript: ^4.8.4
     web-vitals: ^2.1.0
   languageName: unknown
   linkType: soft
@@ -9005,6 +9035,20 @@ __metadata:
   version: 6.1.0
   resolution: "normalize-url@npm:6.1.0"
   checksum: 4a4944631173e7d521d6b80e4c85ccaeceb2870f315584fa30121f505a6dfd86439c5e3fdd8cd9e0e291290c41d0c3599f0cb12ab356722ed242584c30348e50
+  languageName: node
+  linkType: hard
+
+"note-parser@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "note-parser@npm:1.1.0"
+  checksum: 869be860777e45a70fbc2e7b99f6539cc41020ccd0dc56ff0bf6c04c1fd6a06685ef62707974556d78cf5ae90d21f68584d383f506776c9ba515030b793c7a40
+  languageName: node
+  linkType: hard
+
+"note-parser@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "note-parser@npm:2.0.1"
+  checksum: f8a29ea41f86900931495291d6cce660907c9c4ef7c4ae29aa8889eabf60a4810b81992d420d3937256a6134108347e716c9ae1e0fc14c0a1efcaec268865892
   languageName: node
   linkType: hard
 
@@ -11096,6 +11140,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sample-player@npm:^0.5.5":
+  version: 0.5.5
+  resolution: "sample-player@npm:0.5.5"
+  dependencies:
+    adsr: ^1.0.0
+    midimessage: ^1.0.5
+    note-parser: ^1.1.0
+  checksum: 6d5ad83c9ddc8fa0d0ae3fb215ac82ab898bedde5ef3e285bbda188687325f4483e9c3ebb0b4beb238c3700e78311b938a3b8d641d5f8d68ad83d0c64b6295a1
+  languageName: node
+  linkType: hard
+
 "sanitize.css@npm:*":
   version: 13.0.0
   resolution: "sanitize.css@npm:13.0.0"
@@ -11419,6 +11474,17 @@ __metadata:
     ip: ^2.0.0
     smart-buffer: ^4.2.0
   checksum: 259d9e3e8e1c9809a7f5c32238c3d4d2a36b39b83851d0f573bfde5f21c4b1288417ce1af06af1452569cd1eb0841169afd4998f0e04ba04656f6b7f0e46d748
+  languageName: node
+  linkType: hard
+
+"soundfont-player@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "soundfont-player@npm:0.12.0"
+  dependencies:
+    audio-loader: ^0.5.0
+    note-parser: ^2.0.0
+    sample-player: ^0.5.5
+  checksum: f8307f135a7a703ca9654d505273761715785696757f8852fb3eca0925ea03db5541b6ed986ea567a4cc990335c6e780a92777f5c9e7c7082eb18ae9845fc043
   languageName: node
   linkType: hard
 
@@ -12223,7 +12289,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.4.2":
+"typescript@npm:^4.8.4":
   version: 4.8.4
   resolution: "typescript@npm:4.8.4"
   bin:
@@ -12233,7 +12299,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.4.2#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>":
   version: 4.8.4
   resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=701156"
   bin:

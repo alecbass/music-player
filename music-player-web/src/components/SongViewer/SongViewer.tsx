@@ -5,6 +5,9 @@ import { NoteBlock } from "./NoteBlock";
 
 interface Props {
   notes: Note[];
+  /** Key of new note being dragged */
+  draggingNewNote: string | null;
+  onNewNoteDropped?: (afterIndex: number) => void;
   onNotesChanged: (note: Note[]) => void;
 }
 
@@ -18,6 +21,14 @@ export function SongViewer(props: Props) {
     e.stopPropagation();
     if (e.target === rowRef.current) {
       return;
+    }
+  }
+
+  function handleNewNoteDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.stopPropagation();
+
+    if (props.draggingNewNote && props.onNewNoteDropped) {
+      props.onNewNoteDropped(props.notes.length);
     }
   }
 
@@ -56,6 +67,11 @@ export function SongViewer(props: Props) {
     function handlePreMarginDrop(e: React.DragEvent<HTMLDivElement>) {
       e.stopPropagation();
 
+      if (props.draggingNewNote && props.onNewNoteDropped) {
+        props.onNewNoteDropped(index);
+        return;
+      }
+
       if (!draggingNote) {
         return;
       }
@@ -66,14 +82,22 @@ export function SongViewer(props: Props) {
     function handleNoteDrop(e: React.DragEvent<HTMLDivElement>) {
       e.stopPropagation();
 
+      const rect = e.currentTarget.getBoundingClientRect();
+      const diff = e.pageX - rect.x;
+
+      // Did this drop happen on the left hand side of the div
+      const droppedOnLeft = diff < rect.width / 2;
+
+      if (props.draggingNewNote && props.onNewNoteDropped) {
+        props.onNewNoteDropped(droppedOnLeft ? index : index + 1);
+        return;
+      }
+
       if (!draggingNote || draggingNote.id === note.id) {
         return;
       }
 
-      const rect = e.currentTarget.getBoundingClientRect();
-      const diff = e.pageX - rect.x;
-
-      if (diff < rect.width / 2) {
+      if (droppedOnLeft) {
         adjustNotes(draggingNote, index);
       } else {
         adjustNotes(draggingNote, index + 1);
@@ -128,7 +152,15 @@ export function SongViewer(props: Props) {
       className="song-viewer-wrapper"
       onDragEnter={handleNoteDragEnter}
     >
-      <div ref={rowRef} className={"song-viewer-row"}>
+      <div
+        ref={rowRef}
+        className={"song-viewer-row"}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onDrop={handleNewNoteDrop}
+      >
         {props.notes.map(renderNote)}
       </div>
     </div>

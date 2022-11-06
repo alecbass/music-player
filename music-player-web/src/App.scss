@@ -67,6 +67,8 @@
 .note-selector {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
 
   & > div {
     width: 6rem;

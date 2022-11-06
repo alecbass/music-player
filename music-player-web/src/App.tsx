@@ -20,6 +20,7 @@ function App() {
   useKeyboard({ notes, onNotePlayed: handleKeyboardNoteAdd });
   const tempoInputRef = useRef<HTMLInputElement | null>(null);
   const [midiFile, setMidiFile] = useState<File | null>(null);
+  const [draggingNewNote, setDraggingNewNote] = useState<string | null>(null);
 
   function handleKeyboardNoteAdd(note: Note) {
     setNotes((notes) => [...notes, note]);
@@ -43,6 +44,30 @@ function App() {
     setNotes((notes) => [
       ...notes,
       { id: notes.length, key: note, length: 1000 },
+    ]);
+  }
+
+  function handleManualNoteDrop(afterIndex: number) {
+    if (!draggingNewNote) {
+      return;
+    }
+
+    // Create a new note
+    const note: Note = {
+      id: notes.length,
+      key: draggingNewNote,
+      length: 200,
+    };
+
+    if (afterIndex === -1) {
+      setNotes((notes) => [note, ...notes]);
+      return;
+    }
+
+    setNotes((notes) => [
+      ...notes.slice(0, afterIndex),
+      note,
+      ...notes.slice(afterIndex),
     ]);
   }
 
@@ -81,9 +106,17 @@ function App() {
   return (
     <div id="main">
       <h1>Enter some keys</h1>
-      <div style={{ display: "flex", height: 400 }}>
-        <SongViewer notes={notes} onNotesChanged={setNotes} />
-        <Selector onNoteSelected={handleAddManualNote} />
+      <div style={{ display: "flex", flexDirection: "row", height: 800 }}>
+        <SongViewer
+          draggingNewNote={draggingNewNote}
+          notes={notes}
+          onNewNoteDropped={handleManualNoteDrop}
+          onNotesChanged={setNotes}
+        />
+        <Selector
+          onNewNoteDrag={setDraggingNewNote}
+          onNoteSelected={handleAddManualNote}
+        />
       </div>
 
       <div style={{ display: "flex" }}>

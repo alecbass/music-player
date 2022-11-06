@@ -23,10 +23,8 @@ export function SongViewer(props: Props) {
 
   function adjustNotes(note: Note, after: number) {
     const filtered = props.notes.filter((n) => n.id !== note.id);
-    console.debug("After", after);
 
     if (after === -1) {
-      // console.debug([note, ...filtered].map((n) => n.key));
       props.onNotesChanged([note, ...filtered]);
       return;
     }
@@ -36,7 +34,6 @@ export function SongViewer(props: Props) {
       note,
       ...filtered.slice(after),
     ];
-    // console.debug(result.map((n) => n.key));
     props.onNotesChanged(result);
   }
 
@@ -45,7 +42,6 @@ export function SongViewer(props: Props) {
 
     function handleDrag() {
       setDraggingNote(note);
-      console.debug(note);
     }
 
     function handleDragEnter(e: React.DragEvent<HTMLDivElement>) {
@@ -59,7 +55,6 @@ export function SongViewer(props: Props) {
 
     function handlePreMarginDrop(e: React.DragEvent<HTMLDivElement>) {
       e.stopPropagation();
-      console.debug(draggingNote);
 
       if (!draggingNote) {
         return;
@@ -70,18 +65,23 @@ export function SongViewer(props: Props) {
 
     function handleNoteDrop(e: React.DragEvent<HTMLDivElement>) {
       e.stopPropagation();
-      console.debug(draggingNote);
 
-      if (!draggingNote) {
+      if (!draggingNote || draggingNote.id === note.id) {
         return;
       }
 
-      // adjustNotes(draggingNote, note.position);
+      const rect = e.currentTarget.getBoundingClientRect();
+      const diff = e.pageX - rect.x;
+
+      if (diff < rect.width / 2) {
+        adjustNotes(draggingNote, index);
+      } else {
+        adjustNotes(draggingNote, index + 1);
+      }
     }
 
     function handlePostMarginDrop(e: React.DragEvent<HTMLDivElement>) {
       e.stopPropagation();
-      console.debug(draggingNote);
 
       if (!draggingNote) {
         return;

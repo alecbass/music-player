@@ -66,7 +66,7 @@ function App() {
   }
 
   async function loadDataUri(dataUri: string) {
-    const player = new MusicPlayer(dataUri, "koto");
+    player.setSource(dataUri);
     player.play();
   }
 

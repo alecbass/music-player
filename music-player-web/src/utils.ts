@@ -15,3 +15,7 @@ export function bytesToMidiFile(bytes: Uint8Array) {
     "test.mid"
   );
 }
+
+export function classNames(...names: (string | undefined | boolean)[]) {
+  return names.filter((n) => !!n).join(" ");
+}

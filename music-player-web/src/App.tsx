@@ -7,7 +7,7 @@ import { eightMelodiesMapped, noteToMidi } from "components/const";
 import { bytesToMidiFile, downloadFile } from "utils";
 import { MusicPlayer } from "player";
 
-import "./App.css";
+import "./App.scss";
 
 const DEFAULT_TEMPO = 144;
 const player = new MusicPlayer();
@@ -40,7 +40,10 @@ function App() {
   }
 
   function handleAddManualNote(note: string) {
-    setNotes((notes) => [...notes, { key: note, length: 1000 }]);
+    setNotes((notes) => [
+      ...notes,
+      { key: note, length: 1000, position: notes.length },
+    ]);
   }
 
   async function doWasmStuff() {
@@ -77,7 +80,7 @@ function App() {
     <div id="main">
       <h1>Enter some keys</h1>
       <div style={{ display: "flex", height: 400 }}>
-        <SongViewer notes={notes} />
+        <SongViewer notes={notes} onNotesChanged={setNotes} />
         <Selector onNoteSelected={handleAddManualNote} />
       </div>
 

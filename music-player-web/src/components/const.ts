@@ -123,7 +123,11 @@ const EIGHT_MELODIES: NoteTuple[] = [
 ];
 
 function rawToNotes(raw: NoteTuple[]): Note[] {
-  return raw.map((rawNote) => ({ key: rawNote[0], length: rawNote[1] * 100 }));
+  return raw.map((rawNote, index) => ({
+    key: rawNote[0],
+    length: rawNote[1] * 100,
+    position: index,
+  }));
 }
 
 export const eightMelodiesMapped = rawToNotes(EIGHT_MELODIES);

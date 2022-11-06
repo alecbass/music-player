@@ -12,7 +12,7 @@ export function SongViewer(props: Props) {
   const [draggingNote, setDraggingNote] = useState<Note | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const rowRef = useRef<HTMLDivElement | null>(null);
-  const [hoveringOverIndex, setHoveringOverIndex] = useState(-1);
+  const [hoveringOver, setHoveringOver] = useState<Note | null>(null);
 
   function handleNoteDragEnter(e: React.DragEvent<HTMLDivElement>) {
     e.stopPropagation();
@@ -21,14 +21,23 @@ export function SongViewer(props: Props) {
     }
   }
 
-  function adjustNotes(note: Note, before: number) {
-    console.debug("Before", before);
+  function adjustNotes(note: Note, after: number) {
+    const filtered = props.notes.filter((n) => n.id !== note.id);
+    console.debug("After", after);
 
-    props.onNotesChanged([
-      ...props.notes.slice(0, before),
+    if (after === -1) {
+      // console.debug([note, ...filtered].map((n) => n.key));
+      props.onNotesChanged([note, ...filtered]);
+      return;
+    }
+
+    const result = [
+      ...filtered.slice(0, after),
       note,
-      ...props.notes.slice(before + 1),
-    ]);
+      ...filtered.slice(after),
+    ];
+    // console.debug(result.map((n) => n.key));
+    props.onNotesChanged(result);
   }
 
   function renderNote(note: Note, index: number) {
@@ -45,7 +54,7 @@ export function SongViewer(props: Props) {
         return;
       }
 
-      setHoveringOverIndex(index);
+      setHoveringOver(note);
     }
 
     function handlePreMarginDrop(e: React.DragEvent<HTMLDivElement>) {
@@ -56,7 +65,7 @@ export function SongViewer(props: Props) {
         return;
       }
 
-      adjustNotes(draggingNote, note.position);
+      adjustNotes(draggingNote, index);
     }
 
     function handleNoteDrop(e: React.DragEvent<HTMLDivElement>) {
@@ -78,10 +87,10 @@ export function SongViewer(props: Props) {
         return;
       }
 
-      adjustNotes(draggingNote, note.position + 1);
+      adjustNotes(draggingNote, index + 1);
     }
 
-    const isHovered = hoveringOverIndex === index;
+    const isHovered = hoveringOver?.id === note.id;
     const noteWidth = `${(note.length * 2) / 100}rem`;
 
     return (

@@ -38,9 +38,9 @@ export function useKeyboard(props: KeyboardOptions) {
       if (e.key in keyNoteMapping) {
         const timePressed = performance.now() - keyTime.current;
         onNotePlayed({
+          id: notes.length,
           key: keyNoteMapping[e.key],
           length: timePressed,
-          position: notes.length,
         });
 
         // setTimeout(() => {

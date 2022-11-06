@@ -42,7 +42,7 @@ function App() {
   function handleAddManualNote(note: string) {
     setNotes((notes) => [
       ...notes,
-      { key: note, length: 1000, position: notes.length },
+      { id: notes.length, key: note, length: 1000 },
     ]);
   }
 

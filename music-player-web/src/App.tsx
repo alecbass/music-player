@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 import type { Note } from "interface/Note";
 import { useAudio, useSong, useWasm, useKeyboard } from "hooks";
-import { Selector, SongViewer, Intro } from "components";
+import { Selector, SongViewer, Intro, Button } from "components";
 import { eightMelodiesMapped, noteToMidi } from "components/const";
 import { bytesToMidiFile, downloadFile } from "utils";
 import { MusicPlayer } from "player";
@@ -105,7 +105,7 @@ function App() {
 
   return (
     <div id="main">
-      <h1>Enter some keys</h1>
+      <h1 style={{ alignSelf: "center" }}>Enter some keys</h1>
       <div style={{ display: "flex", flexDirection: "row", height: 800 }}>
         <SongViewer
           draggingNewNote={draggingNewNote}
@@ -124,24 +124,45 @@ function App() {
         <input ref={tempoInputRef} type="number" defaultValue={DEFAULT_TEMPO} />
       </div>
 
-      <h3>Selections</h3>
-      <button onClick={() => setNotes(eightMelodiesMapped)}>
-        Eight Melodies (Earthbound Beginnings)
-      </button>
-      <button disabled={!notes.length} onClick={doWasmStuff}>
-        Generate and play MIDI
-      </button>
-      <button disabled={!midiFile} onClick={handleDownloadFile}>
-        Download your MIDI file
-      </button>
-      <h3>Coming soon...</h3>
-      <span>Harmony - Runescape</span>
-      <span>Feel free to tell me some ideas lol</span>
+      <section className="extras">
+        <h3>Extras</h3>
+        <div className="extras-blocks">
+          <div className="extras-block">
+            <h3>Library</h3>
+            <Button onClick={() => setNotes(eightMelodiesMapped)}>
+              Eight Melodies (Earthbound Beginnings)
+            </Button>{" "}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <b>Coming soon...</b>
+              <span>Harmony - Runescape</span>
+              <span>Feel free to tell me some ideas lol</span>
+            </div>
+          </div>
 
-      <br />
-      <h3>Misc</h3>
-      <button onClick={() => loadDataUri(mario)}>Play mario</button>
-      <button onClick={() => loadDataUri(zelda)}>Play Zelda :DD</button>
+          <div className="extras-block">
+            <h3>Options</h3>
+            <Button disabled={!notes.length} onClick={doWasmStuff}>
+              Generate and play MIDI
+            </Button>
+            <Button disabled={!midiFile} onClick={handleDownloadFile}>
+              Download your MIDI file
+            </Button>
+          </div>
+
+          <div className="extras-block">
+            <h3>Misc</h3>
+            <button onClick={() => loadDataUri(mario)}>Play mario</button>
+            <button onClick={() => loadDataUri(zelda)}>Play Zelda :DD</button>
+          </div>
+        </div>
+      </section>
 
       {!hasPermission && <Intro onAccept={requestPermission} />}
     </div>

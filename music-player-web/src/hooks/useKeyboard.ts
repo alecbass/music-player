@@ -1,16 +1,16 @@
 import { useEffect, useRef } from "react";
 import type { Note } from "interface/Note";
 
-import { keyNoteMapping, noteToMidi } from "components/const";
+import { keyNoteMapping } from "components/const";
 import { useAudio } from "hooks";
 
-interface Props {
+interface KeyboardOptions {
   notes: Note[];
   onNotePlayed: (note: Note) => void;
   playOnPressed?: boolean;
 }
 
-export function KeyBoard(props: Props) {
+export function useKeyboard(props: KeyboardOptions) {
   const isKeyDown = useRef(false);
   const pressId = useRef(0);
   const { playNote, stop } = useAudio();
@@ -56,6 +56,4 @@ export function KeyBoard(props: Props) {
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, [playOnPressed, notes, onNotePlayed, playNote, stop]);
-
-  return null;
 }

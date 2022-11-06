@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 
 import type { Note } from "interface/Note";
-import { useAudio, useSong, useWasm } from "hooks";
-import { KeyBoard, Selector, SongViewer, Intro } from "components";
+import { useAudio, useSong, useWasm, useKeyboard } from "hooks";
+import { Selector, SongViewer, Intro } from "components";
 import { eightMelodiesMapped, noteToMidi } from "components/const";
 import { bytesToMidiFile, downloadFile } from "utils";
 import { MusicPlayer } from "player";
@@ -17,6 +17,7 @@ function App() {
   const { hasPermission, requestPermission } = useAudio();
   const { notes, setNotes, playSong } = useSong();
   const wasm = useWasm();
+  useKeyboard({ notes, onNotePlayed: handleKeyboardNoteAdd });
   const tempoInputRef = useRef<HTMLInputElement | null>(null);
   const [midiFile, setMidiFile] = useState<File | null>(null);
 
@@ -76,7 +77,6 @@ function App() {
     <div id="main">
       <h1>Enter some keys</h1>
       <div style={{ display: "flex", height: 400 }}>
-        <KeyBoard notes={notes} onNotePlayed={handleKeyboardNoteAdd} />
         <SongViewer notes={notes} />
         <Selector onNoteSelected={handleAddManualNote} />
       </div>

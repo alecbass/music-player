@@ -61,11 +61,13 @@ function App() {
     const midiFile = bytesToMidiFile(midiFileBytes);
     setMidiFile(midiFile);
 
+    player.stop();
     player.setSource(midiFile);
     player.play();
   }
 
   async function loadDataUri(dataUri: string) {
+    player.stop();
     player.setSource(dataUri);
     player.play();
   }

@@ -1,10 +1,10 @@
-import { DetailedHTMLProps, forwardRef, ButtonHTMLAttributes } from "react";
+import { forwardRef, ComponentPropsWithoutRef } from "react";
 
 import { classNames } from "utils";
 
 export const Button = forwardRef<
   HTMLButtonElement,
-  DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
+  ComponentPropsWithoutRef<"button">
 >((props, ref) => {
   const { className, children, ...rest } = props;
 

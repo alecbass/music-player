@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 
-import type { Note } from "interface/Note";
+import type { Note, NoteWithMidi } from "interface/Note";
 import { useAudio, useSong, useWasm, useKeyboard } from "hooks";
-import { Selector, SongViewer, Intro, Button } from "components";
+import { Selector, SongViewer, Intro, Button, Footer } from "components";
 import { eightMelodiesMapped, noteToMidi } from "components/const";
-import { bytesToMidiFile, downloadFile } from "utils";
+import { bytesToMidiFile, downloadFile, generateRandomMidi } from "utils";
 import { MusicPlayer } from "player";
 
 import "./App.scss";
@@ -75,7 +75,7 @@ function App() {
     const toCombine = notes.map((n) => ({
       key: noteToMidi[n.key as keyof typeof noteToMidi],
       length: Math.floor(n.length),
-    }));
+    })) as NoteWithMidi[];
 
     const midiFileBytes = wasm.combine_all_notes(
       1,
@@ -97,6 +97,20 @@ function App() {
     player.play();
   }
 
+  function handleGenerateRandomMidi() {
+    let benchMark = performance.now();
+    let notes = wasm.generate_random_midi(999990) as Note[];
+    let diff = performance.now() - benchMark;
+    console.debug(`WASM took ${diff}ms`);
+    console.debug(notes);
+
+    benchMark = performance.now();
+    notes = generateRandomMidi(999990);
+    diff = performance.now() - benchMark;
+    console.debug(`JS took ${diff}ms`);
+    console.debug(notes);
+  }
+
   function handleDownloadFile() {
     if (midiFile) {
       downloadFile(midiFile);
@@ -105,17 +119,17 @@ function App() {
 
   return (
     <div id="main">
-      <h1 style={{ alignSelf: "center" }}>Enter some keys</h1>
+      <h1 style={{ alignSelf: "center" }}>WASM-React Music Player</h1>
       <div style={{ display: "flex", flexDirection: "row", height: 800 }}>
+        <Selector
+          onNewNoteDrag={setDraggingNewNote}
+          onNoteSelected={handleAddManualNote}
+        />
         <SongViewer
           draggingNewNote={draggingNewNote}
           notes={notes}
           onNewNoteDropped={handleManualNoteDrop}
           onNotesChanged={setNotes}
-        />
-        <Selector
-          onNewNoteDrag={setDraggingNewNote}
-          onNoteSelected={handleAddManualNote}
         />
       </div>
 
@@ -129,6 +143,7 @@ function App() {
         <div className="extras-blocks">
           <div className="extras-block">
             <h3>Library</h3>
+            <Button onClick={handleGenerateRandomMidi}>Random Song</Button>
             <Button onClick={() => setNotes(eightMelodiesMapped)}>
               Eight Melodies (Earthbound Beginnings)
             </Button>{" "}
@@ -162,6 +177,7 @@ function App() {
             <button onClick={() => loadDataUri(zelda)}>Play Zelda :DD</button>
           </div>
         </div>
+        <Footer />
       </section>
 
       {!hasPermission && <Intro onAccept={requestPermission} />}

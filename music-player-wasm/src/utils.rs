@@ -1,6 +1,6 @@
 use phf::{phf_map, Map};
-use serde::{Deserialize, Serialize};
 
+/** Copy of the musical note to MIDI key mapping from the frontend */
 pub static NOTE_TO_MIDI: Map<&'static str, u8> = phf_map! {
   "C3" => 48,
   "C3S" => 49,
@@ -50,33 +50,3 @@ pub static NOTE_TO_MIDI: Map<&'static str, u8> = phf_map! {
   "B6" => 94,
   "B6S" => 95,
 };
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Note {
-    pub id: u32,
-    pub key: String,
-    pub length: u32,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct NoteWithMidi {
-    pub key: u8,
-    pub length: u32,
-}
-
-impl From<(u8, u32)> for NoteWithMidi {
-    fn from((key, length): (u8, u32)) -> Self {
-        Self { key, length }
-    }
-}
-
-impl From<&Note> for NoteWithMidi {
-    fn from(note: &Note) -> Self {
-        // If the note string is not valid, then fail
-        let key = NOTE_TO_MIDI.get(&note.key).unwrap();
-        Self {
-            key: *key,
-            length: note.length,
-        }
-    }
-}

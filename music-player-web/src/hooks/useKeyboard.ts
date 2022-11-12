@@ -1,22 +1,23 @@
 import { useEffect, useRef } from "react";
 import type { Note } from "interface/Note";
 
-import { keyNoteMapping, noteToMidi } from "components/const";
+import { keyNoteMapping } from "components/const";
 import { useAudio } from "hooks";
 
-interface Props {
-  notes: Note[];
-  onNotePlayed: (note: Note) => void;
-  playOnPressed?: boolean;
+interface KeyboardOptions {
+  /** Event to fire when a key is pressed */
+  onKeyDown: (note: Note["key"]) => void;
+  /** Event fired on key up, when a note and its length have been finalised */
+  onKeyUp: (note: Omit<Note, "id">) => void;
 }
 
-export function KeyBoard(props: Props) {
+export function useKeyboard(props: KeyboardOptions) {
   const isKeyDown = useRef(false);
   const pressId = useRef(0);
   const { playNote, stop } = useAudio();
   const keyTime = useRef(0);
 
-  const { playOnPressed, notes, onNotePlayed } = props;
+  const { onKeyDown, onKeyUp } = props;
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (isKeyDown.current) {
@@ -27,17 +28,23 @@ export function KeyBoard(props: Props) {
       keyTime.current = performance.now();
       pressId.current++;
 
-      // if (e.key in keyNoteMapping && playOnPressed) {
-      //   playNote(noteToMidi[keyNoteMapping[e.key]]);
-      // }
+      // Playing a note on key down
+      if (e.key in keyNoteMapping) {
+        const timePressed = performance.now() - keyTime.current;
+        onKeyDown(keyNoteMapping[e.key]);
+      }
     }
 
     function handleKeyUp(e: KeyboardEvent) {
       isKeyDown.current = false;
-      const thisPressId = pressId.current;
+      // const thisPressId = pressId.current;
+
       if (e.key in keyNoteMapping) {
         const timePressed = performance.now() - keyTime.current;
-        onNotePlayed({ key: keyNoteMapping[e.key], length: timePressed });
+        onKeyUp({
+          key: keyNoteMapping[e.key],
+          length: timePressed,
+        });
 
         // setTimeout(() => {
         //   if (thisPressId === pressId.current) {
@@ -55,7 +62,5 @@ export function KeyBoard(props: Props) {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [playOnPressed, notes, onNotePlayed, playNote, stop]);
-
-  return null;
+  }, [onKeyDown, onKeyUp, playNote, stop]);
 }

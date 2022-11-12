@@ -1,12 +1,12 @@
 use wasm_bindgen::prelude::*;
 
-use midir::{Ignore, MidiInput, MidiOutput};
-use std::sync::{Arc, Mutex, RwLock};
-use web_sys::console;
+use rand::random;
 
 extern crate js_sys;
 extern crate midir;
 extern crate midly;
+extern crate phf;
+extern crate rand;
 extern crate serde;
 extern crate web_sys;
 
@@ -20,6 +20,8 @@ extern "C" {
     pub fn log(msg: &str);
     #[wasm_bindgen(js_namespace = console)]
     pub fn debug(msg: &str);
+    #[wasm_bindgen(js_namespace = console)]
+    pub fn error(msg: &str);
 }
 
 #[wasm_bindgen]
@@ -37,172 +39,12 @@ pub fn return_vector() -> Vec<i32> {
     vec![1, 2, 3, 4, 5, 6, 200]
 }
 
-#[wasm_bindgen]
-pub fn thread_stuff() -> i32 {
-    let mut value: RwLock<Option<i32>> = RwLock::new(None);
-    fn do_thing() {
-        alert("HELLO from thread!!!!!!!!!!!!!!!!!!!!!!!!!");
-    }
-    // spawn(do_thing).join().unwrap();
-
-    alert("Exited thread breeheheee");
-
-    return 5;
-}
-
-#[wasm_bindgen]
-pub fn start(msg: &str) -> u8 {
-    // let token_outer = Arc::new(Mutex::new(None));
-    // let token = token_outer.clone();
-
-    my_run().expect("oh no");
-    // let closure: Closure<dyn FnMut()> = Closure::wrap(Box::new(move || {
-    //     if run().unwrap() == true {
-    //         if let Some(token) = *token.lock().unwrap() {
-    //             web_sys::window().unwrap().clear_interval_with_handle(token);
-    //         }
-    //     }
-    // }));
-    // *token_outer.lock().unwrap() = web_sys::window()
-    //     .unwrap()
-    //     .set_interval_with_callback_and_timeout_and_arguments_0(
-    //         closure.as_ref().unchecked_ref(),
-    //         200,
-    //     )
-    //     .ok();
-    // closure.forget();
-
-    5
-}
-
-fn my_run() -> Result<bool, ()> {
-    debug("RUNNING");
-    let window = web_sys::window().expect("no global `window` exists");
-
-    let mut midi_out = MidiOutput::new("output reader").unwrap();
-    let ports = midi_out.ports();
-    debug(&format!("Out ports: {}", ports.len()));
-
-    // let mut midi_in = MidiInput::new("midir reading input").unwrap();
-    // midi_in.ignore(Ignore::None);
-
-    // // Get an input port
-    // let ports = midi_in.ports();
-    // let in_port = match &ports[..] {
-    //     [] => {
-    //         log("No ports available yet, will try again");
-    //         return Ok(false);
-    //     }
-    //     [ref port] => {
-    //         log(&format!(
-    //             "Choosing the only available input port: {}",
-    //             midi_in.port_name(port).unwrap()
-    //         ));
-    //         port
-    //     }
-    //     _ => {
-    //         let mut msg = "Choose an available input port:\n".to_string();
-    //         for (i, port) in ports.iter().enumerate() {
-    //             msg.push_str(format!("{}: {}\n", i, midi_in.port_name(port).unwrap()).as_str());
-    //         }
-    //         loop {
-    //             if let Ok(Some(port_str)) = window.prompt_with_message_and_default(&msg, "0") {
-    //                 if let Ok(port_int) = port_str.parse::<usize>() {
-    //                     if let Some(port) = &ports.get(port_int) {
-    //                         break port.clone();
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // };
-
-    // println!("Opening connection");
-    // let in_port_name = midi_in.port_name(in_port).unwrap();
-
-    // // _conn_in needs to be a named parameter, because it needs to be kept alive until the end of the scope
-    // let _conn_in = midi_in
-    //     .connect(
-    //         in_port,
-    //         "midir-read-input",
-    //         move |stamp, message, _| {
-    //             println!("{}: {:?} (len = {})", stamp, message, message.len());
-    //         },
-    //         (),
-    //     )
-    //     .unwrap();
-
-    // log(&format!(
-    //     "Connection open, reading input from '{}'",
-    //     in_port_name
-    // ));
-    // Box::leak(Box::new(_conn_in));
-
-    // debug("DONEEEE");
-    Ok(true)
-}
-
-// fn run() -> Result<bool, Box<dyn Error>> {
-//     let window = web_sys::window().expect("no global `window` exists");
-
-//     let mut midi_in = MidiInput::new("midir reading input")?;
-//     midi_in.ignore(Ignore::None);
-
-//     // Get an input port
-//     let ports = midi_in.ports();
-//     let in_port = match &ports[..] {
-//         [] => {
-//             println!("No ports available yet, will try again");
-//             return Ok(false);
-//         }
-//         [ref port] => {
-//             println!(
-//                 "Choosing the only available input port: {}",
-//                 midi_in.port_name(port).unwrap()
-//             );
-//             port
-//         }
-//         _ => {
-//             let mut msg = "Choose an available input port:\n".to_string();
-//             for (i, port) in ports.iter().enumerate() {
-//                 msg.push_str(format!("{}: {}\n", i, midi_in.port_name(port).unwrap()).as_str());
-//             }
-//             loop {
-//                 if let Ok(Some(port_str)) = window.prompt_with_message_and_default(&msg, "0") {
-//                     if let Ok(port_int) = port_str.parse::<usize>() {
-//                         if let Some(port) = &ports.get(port_int) {
-//                             break port.clone();
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     };
-
-//     println!("Opening connection");
-//     let in_port_name = midi_in.port_name(in_port)?;
-
-//     // _conn_in needs to be a named parameter, because it needs to be kept alive until the end of the scope
-//     let _conn_in = midi_in.connect(
-//         in_port,
-//         "midir-read-input",
-//         move |stamp, message, _| {
-//             println!("{}: {:?} (len = {})", stamp, message, message.len());
-//         },
-//         (),
-//     )?;
-
-//     println!("Connection open, reading input from '{}'", in_port_name);
-//     Box::leak(Box::new(_conn_in));
-//     Ok(true)
-// }
-
-use crate::note::Note;
+use crate::note::{Note, NoteWithMidi, NOTE_TO_MIDI};
 use midi::{combine_notes, handle_note};
 
 #[wasm_bindgen]
 pub fn combine_all_notes(channel: u8, notes: JsValue, tempo: u16) -> Vec<u8> {
-    let notes: Vec<Note> = match serde_wasm_bindgen::from_value(notes) {
+    let notes: Vec<NoteWithMidi> = match serde_wasm_bindgen::from_value(notes) {
         Ok(n) => n,
         Err(e) => {
             log(&format!("Error: {:?}", e));
@@ -215,7 +57,7 @@ pub fn combine_all_notes(channel: u8, notes: JsValue, tempo: u16) -> Vec<u8> {
 
 #[wasm_bindgen]
 pub fn on_note(channel: u8, note: JsValue, tempo: u16) -> Vec<u8> {
-    let note: Note = match serde_wasm_bindgen::from_value(note) {
+    let note: NoteWithMidi = match serde_wasm_bindgen::from_value(note) {
         Ok(n) => n,
         Err(e) => {
             log(&format!("Error: {:?}", e));
@@ -224,4 +66,52 @@ pub fn on_note(channel: u8, note: JsValue, tempo: u16) -> Vec<u8> {
     };
 
     handle_note(channel, note, tempo)
+}
+
+/** If true, uses pre-allocation */
+const USE_PREALLOCATION: bool = true;
+
+#[wasm_bindgen]
+pub fn generate_random_midi(length: usize) -> JsValue {
+    let keys: Vec<&&'static str> = NOTE_TO_MIDI.keys().collect();
+
+    fn generate_random_note(value: usize, keys: &Vec<&&'static str>) -> Note {
+        let random_index = (random::<f32>() * keys.len() as f32).floor() as usize;
+        let key = keys.get(random_index).unwrap();
+
+        Note {
+            id: value as u32,
+            key: key.to_string(),
+            length: (random_index as u32) * 10,
+        }
+    }
+
+    // We can do an interesting comparison of pre-allocating an array list vs mapping over a range
+    let mut notes: Vec<Note>;
+
+    if USE_PREALLOCATION {
+        notes = Vec::with_capacity(length);
+        for value in 0..length {
+            notes.push(generate_random_note(value, &keys));
+        }
+    } else {
+        notes = (0..length)
+            .map(|value| generate_random_note(value, &keys))
+            .collect::<Vec<Note>>();
+    }
+
+    serde_wasm_bindgen::to_value(&notes).unwrap()
+}
+
+#[wasm_bindgen]
+pub fn get_notes_from_bytes(bytes: Vec<u8>) -> JsValue {
+    let notes = match Note::from_json_bytes(&bytes) {
+        Ok(notes) => notes,
+        Err(e) => {
+            error(&format!("Failed to parse notes from JSON bytes: {:?}", e));
+            return JsValue::NULL;
+        }
+    };
+
+    serde_wasm_bindgen::to_value(&notes).unwrap()
 }

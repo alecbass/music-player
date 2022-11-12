@@ -4317,7 +4317,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^3.4.2, chokidar@npm:^3.5.3":
+"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.4.2, chokidar@npm:^3.5.3":
   version: 3.5.3
   resolution: "chokidar@npm:3.5.3"
   dependencies:
@@ -7004,6 +7004,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immutable@npm:^4.0.0":
+  version: 4.1.0
+  resolution: "immutable@npm:4.1.0"
+  checksum: b9bc1f14fb18eb382d48339c064b24a1f97ae4cf43102e0906c0a6e186a27afcd18b55ca4a0b63c98eefb58143e2b5ebc7755a5fb4da4a7ad84b7a6096ac5b13
+  languageName: node
+  linkType: hard
+
 "import-fresh@npm:^3.0.0, import-fresh@npm:^3.1.0, import-fresh@npm:^3.2.1":
   version: 3.3.0
   resolution: "import-fresh@npm:3.3.0"
@@ -8896,8 +8903,8 @@ __metadata:
 
 "music-player-wasm@file:../music-player-wasm/pkg::locator=music-player-web%40workspace%3A.":
   version: 0.1.0
-  resolution: "music-player-wasm@file:../music-player-wasm/pkg#../music-player-wasm/pkg::hash=fdf5a5&locator=music-player-web%40workspace%3A."
-  checksum: 62a8c2dba658d9b84b49f7d28dc78b47b3b42b57cbfdfea5164244961fe07aa1dfa79b1d7c5b2779a93c59e10ba55323fa7bd4d47bc30f9ea7817b57f58dc63c
+  resolution: "music-player-wasm@file:../music-player-wasm/pkg#../music-player-wasm/pkg::hash=4a0d26&locator=music-player-web%40workspace%3A."
+  checksum: 6ad772a82fe72c3e80fa790b2b4f7fe6ac7e9cd24886f06a54abcec166d5ef746e264d91fe1180c2748c0432cce239c9ae6edba92af4a19bdcfdbfe25cf2437a
   languageName: node
   linkType: hard
 
@@ -8919,6 +8926,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1
+    sass: ^1.56.0
     soundfont-player: ^0.12.0
     typescript: ^4.8.4
     web-vitals: ^2.1.0
@@ -11183,6 +11191,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sass@npm:^1.56.0":
+  version: 1.56.0
+  resolution: "sass@npm:1.56.0"
+  dependencies:
+    chokidar: ">=3.0.0 <4.0.0"
+    immutable: ^4.0.0
+    source-map-js: ">=0.6.2 <2.0.0"
+  bin:
+    sass: sass.js
+  checksum: 37fb48b838f7a12f3c3efbf27bfc5f2b7fba015ed4b11effe32bd9488e30e1d5cefcbfef1e5c5dbd95557889fe2c7ec72f33e898cfc76182ea34eae03b1a4fb1
+  languageName: node
+  linkType: hard
+
 "sax@npm:~1.2.4":
   version: 1.2.4
   resolution: "sax@npm:1.2.4"
@@ -11495,7 +11516,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-js@npm:^1.0.1, source-map-js@npm:^1.0.2":
+"source-map-js@npm:>=0.6.2 <2.0.0, source-map-js@npm:^1.0.1, source-map-js@npm:^1.0.2":
   version: 1.0.2
   resolution: "source-map-js@npm:1.0.2"
   checksum: c049a7fc4deb9a7e9b481ae3d424cc793cb4845daa690bc5a05d428bf41bf231ced49b4cf0c9e77f9d42fdb3d20d6187619fc586605f5eabe995a316da8d377c

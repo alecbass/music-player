@@ -1,7 +1,12 @@
-use crate::note::Note;
+use crate::note::NoteWithMidi;
 use midly::{Format, Header, MetaMessage, MidiMessage, Smf, Timing, TrackEvent, TrackEventKind};
 
-pub fn combine_notes(channel: u8, notes: Vec<Note>, tempo: u16, play_immediately: bool) -> Vec<u8> {
+pub fn combine_notes(
+    channel: u8,
+    notes: Vec<NoteWithMidi>,
+    tempo: u16,
+    play_immediately: bool,
+) -> Vec<u8> {
     let mut buffer = Vec::<u8>::new();
 
     let mut resulting_tracks: Vec<TrackEvent> = Vec::new();
@@ -85,6 +90,6 @@ pub fn combine_notes(channel: u8, notes: Vec<Note>, tempo: u16, play_immediately
     buffer
 }
 
-pub fn handle_note(channel: u8, note: Note, tempo: u16) -> Vec<u8> {
+pub fn handle_note(channel: u8, note: NoteWithMidi, tempo: u16) -> Vec<u8> {
     combine_notes(channel, vec![note], tempo, true)
 }

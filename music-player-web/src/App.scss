@@ -1,0 +1,174 @@
+/*
+ * Generic
+*/
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  background-color: lightskyblue;
+  min-height: 2rem;
+  width: 6rem;
+}
+
+#main {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+
+  overflow-y: scroll;
+
+  background-color: #5c5c5c;
+  color: #ffffff;
+}
+
+.song-viewer-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  height: 100%;
+  width: 100%;
+  background-color: darkslategray;
+
+  padding: 0.5rem 0 0.5rem;
+
+  overflow: hidden auto;
+}
+
+.note-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin: 0.5rem 0;
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  // Width is defined by the note's length
+  background-color: blue;
+  color: #ffffff;
+
+  transition: box-shadow 300ms linear;
+
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: 0px 0px 0.25rem 0.25rem grey inset;
+    }
+  }
+
+  &.highlighted {
+    box-shadow: 0px 0px 0.25rem 0.25rem grey inset;
+  }
+}
+
+.note-margin {
+  height: 3rem;
+  flex: 0 0 0.5rem;
+
+  &.active {
+    background-color: #ffffff;
+    // box-shadow: 0px 0px 0.25rem 0.25rem grey inset;
+  }
+}
+
+.note-selector {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+
+  & > div {
+    width: 6rem;
+    margin-bottom: 1rem;
+    color: #000;
+  }
+}
+
+.note-3 {
+  background-color: yellow;
+}
+
+.note-4 {
+  background-color: greenyellow;
+}
+
+.note-5 {
+  background-color: green;
+}
+
+/*
+ * Extras
+*/
+
+.extras {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.extras-blocks {
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 32%;
+  width: 100%;
+}
+
+.extras-block {
+  flex: 1;
+  height: 100%;
+  padding: 0rem;
+  border: 1px solid #000000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  & h1,
+  & h2,
+  & h3 {
+    // justify-self: flex-start;
+  }
+
+  & > *:not(last-child) {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* 
+ * Intro
+*/
+
+.intro {
+  position: fixed;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  height: 100vh;
+  width: 100vw;
+  background-color: white;
+  z-index: 9999;
+
+  & > * {
+    margin-bottom: 2rem;
+  }
+
+  .span {
+    color: teal;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

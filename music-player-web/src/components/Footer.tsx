@@ -8,7 +8,11 @@ export const Footer = forwardRef<
     <footer ref={ref} {...props}>
       <h3>
         Like the project?{" "}
-        <a target="_blank" href="https://github.com/alecbass/music-player">
+        <a
+          target="_blank"
+          rel="noreferrer"
+          href="https://github.com/alecbass/music-player"
+        >
           Find the repository here
         </a>
       </h3>

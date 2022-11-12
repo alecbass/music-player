@@ -95,7 +95,6 @@ class AudioPlayer {
 
     this.isPlaying = true;
 
-    const length = 10;
     const eps = 0.01;
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = "sine";

@@ -28,24 +28,21 @@
 .song-viewer-wrapper {
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  align-content: flex-start;
   height: 100%;
   width: 100%;
-
-  overflow: auto;
-}
-
-.song-viewer-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  background-color: #f0f5f7;
   background-color: darkslategray;
 
-  height: 100%;
-  width: 100%;
+  padding: 0.5rem 0 0.5rem;
 
-  overflow: scroll;
+  overflow: hidden auto;
+}
+
+.note-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin: 0.5rem 0;
 }
 
 .note {
@@ -53,10 +50,9 @@
   align-items: center;
   justify-content: center;
   height: 3rem;
-  /* width: 1rem; */
+  // Width is defined by the note's length
   background-color: blue;
   color: #ffffff;
-  /* border-right: 1px solid #fff; */
 
   transition: box-shadow 300ms linear;
 

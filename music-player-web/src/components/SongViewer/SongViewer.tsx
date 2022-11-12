@@ -17,18 +17,15 @@ export function SongViewer(props: Props) {
   const rowRef = useRef<HTMLDivElement | null>(null);
   const [hoveringOver, setHoveringOver] = useState<Note | null>(null);
 
+  useEffect(() => {
+    setDraggingNote(null);
+    setHoveringOver(null);
+  }, [props.notes]);
+
   function handleNoteDragEnter(e: React.DragEvent<HTMLDivElement>) {
     e.stopPropagation();
     if (e.target === rowRef.current) {
       return;
-    }
-  }
-
-  function handleNewNoteDrop(e: React.DragEvent<HTMLDivElement>) {
-    e.stopPropagation();
-
-    if (props.draggingNewNote && props.onNewNoteDropped) {
-      props.onNewNoteDropped(props.notes.length);
     }
   }
 
@@ -118,7 +115,11 @@ export function SongViewer(props: Props) {
     const noteWidth = `${(note.length * 2) / 100}rem`;
 
     return (
-      <React.Fragment key={index}>
+      <div
+        key={index}
+        className="note-wrapper"
+        style={{ width: `calc(${noteWidth} + 1rem)` }}
+      >
         <div
           className={classNames("note-margin", isHovered && "active")}
           onDragOver={(e) => {
@@ -142,7 +143,7 @@ export function SongViewer(props: Props) {
           }}
           onDrop={handlePostMarginDrop}
         />
-      </React.Fragment>
+      </div>
     );
   }
 
@@ -152,17 +153,7 @@ export function SongViewer(props: Props) {
       className="song-viewer-wrapper"
       onDragEnter={handleNoteDragEnter}
     >
-      <div
-        ref={rowRef}
-        className={"song-viewer-row"}
-        onDragOver={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-        onDrop={handleNewNoteDrop}
-      >
-        {props.notes.map(renderNote)}
-      </div>
+      {props.notes.map(renderNote)}
     </div>
   );
 }

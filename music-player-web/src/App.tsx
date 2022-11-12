@@ -8,6 +8,7 @@ import {
   noteToMidi,
   mario,
   zelda,
+  harmonyMapped,
 } from "components/const";
 import {
   bytesToMidiFile,
@@ -183,6 +184,9 @@ function App() {
             </Button>
             <Button onClick={() => setNotes(eightMelodiesMapped)}>
               Eight Melodies (Earthbound Beginnings)
+            </Button>
+            <Button onClick={() => setNotes(harmonyMapped)}>
+              Harmony (Runescape)
             </Button>
             <Button>
               <label

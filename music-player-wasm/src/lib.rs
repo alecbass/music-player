@@ -20,6 +20,8 @@ extern "C" {
     pub fn log(msg: &str);
     #[wasm_bindgen(js_namespace = console)]
     pub fn debug(msg: &str);
+    #[wasm_bindgen(js_namespace = console)]
+    pub fn error(msg: &str);
 }
 
 #[wasm_bindgen]
@@ -97,6 +99,19 @@ pub fn generate_random_midi(length: usize) -> JsValue {
             .map(|value| generate_random_note(value, &keys))
             .collect::<Vec<Note>>();
     }
+
+    serde_wasm_bindgen::to_value(&notes).unwrap()
+}
+
+#[wasm_bindgen]
+pub fn get_notes_from_bytes(bytes: Vec<u8>) -> JsValue {
+    let notes = match Note::from_json_bytes(&bytes) {
+        Ok(notes) => notes,
+        Err(e) => {
+            error(&format!("Failed to parse notes from JSON bytes: {:?}", e));
+            return JsValue::NULL;
+        }
+    };
 
     serde_wasm_bindgen::to_value(&notes).unwrap()
 }

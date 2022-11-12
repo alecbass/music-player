@@ -37,3 +37,18 @@ export function generateRandomMidi(length: number): Note[] {
 
   return Array.from(Array(length).keys()).map(getRandomNote);
 }
+
+export async function importNotes(
+  wasm: typeof import("music-player-wasm"),
+  file: File
+) {
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  return wasm.get_notes_from_bytes(bytes) as Note[];
+}
+
+export function exportNotes(notes: Note[]) {
+  const json = JSON.stringify(notes);
+  const file = new File([json], "notes.json");
+  downloadFile(file);
+}

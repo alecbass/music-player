@@ -58,6 +58,13 @@ pub struct Note {
     pub length: u32,
 }
 
+impl Note {
+    pub fn from_json_bytes(bytes: &[u8]) -> std::io::Result<Vec<Self>> {
+        let value: Vec<Note> = serde_json::from_slice(bytes)?;
+        Ok(value)
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NoteWithMidi {
     pub key: u8,

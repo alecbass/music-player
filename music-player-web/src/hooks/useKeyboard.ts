@@ -5,12 +5,10 @@ import { keyNoteMapping } from "components/const";
 import { useAudio } from "hooks";
 
 interface KeyboardOptions {
-  notes: Note[];
   /** Event to fire when a key is pressed */
   onKeyDown: (note: Note["key"]) => void;
   /** Event fired on key up, when a note and its length have been finalised */
-  onKeyUp: (note: Note) => void;
-  playOnPressed?: boolean;
+  onKeyUp: (note: Omit<Note, "id">) => void;
 }
 
 export function useKeyboard(props: KeyboardOptions) {
@@ -19,7 +17,7 @@ export function useKeyboard(props: KeyboardOptions) {
   const { playNote, stop } = useAudio();
   const keyTime = useRef(0);
 
-  const { playOnPressed, notes, onKeyDown, onKeyUp } = props;
+  const { onKeyDown, onKeyUp } = props;
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (isKeyDown.current) {
@@ -44,7 +42,6 @@ export function useKeyboard(props: KeyboardOptions) {
       if (e.key in keyNoteMapping) {
         const timePressed = performance.now() - keyTime.current;
         onKeyUp({
-          id: notes.length,
           key: keyNoteMapping[e.key],
           length: timePressed,
         });
@@ -65,5 +62,5 @@ export function useKeyboard(props: KeyboardOptions) {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [playOnPressed, notes, onKeyDown, onKeyUp, playNote, stop]);
+  }, [onKeyDown, onKeyUp, playNote, stop]);
 }

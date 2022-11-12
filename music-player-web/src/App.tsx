@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 import type { Note, NoteWithMidi } from "interface/Note";
 import { useAudio, useSong, useWasm, useKeyboard } from "hooks";
@@ -9,7 +9,13 @@ import {
   mario,
   zelda,
 } from "components/const";
-import { bytesToMidiFile, downloadFile, generateRandomMidi } from "utils";
+import {
+  bytesToMidiFile,
+  downloadFile,
+  generateRandomMidi,
+  exportNotes,
+  importNotes,
+} from "utils";
 import { MusicPlayer } from "player";
 
 import "./App.scss";
@@ -44,15 +50,14 @@ function App() {
   );
 
   const handleKeyboardNoteAdd = useCallback(
-    (note: Note) => {
+    (note: Omit<Note, "id">) => {
       player.stop();
-      setNotes((notes) => [...notes, note]);
+      setNotes((notes) => [...notes, { ...note, id: notes.length }]);
     },
     [setNotes]
   );
 
   useKeyboard({
-    notes,
     onKeyDown: handleKeyboardNotePressed,
     onKeyUp: handleKeyboardNoteAdd,
   });
@@ -140,6 +145,18 @@ function App() {
     }
   }
 
+  async function handleLoadFile(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) {
+      const [file] = e.target.files;
+      const notes = await importNotes(wasm, file);
+      setNotes(notes);
+    }
+  }
+
+  function handleExportFile() {
+    exportNotes(notes);
+  }
+
   return (
     <div id="main">
       <h1 style={{ alignSelf: "center" }}>WASM-React Music Player</h1>
@@ -166,7 +183,27 @@ function App() {
             </Button>
             <Button onClick={() => setNotes(eightMelodiesMapped)}>
               Eight Melodies (Earthbound Beginnings)
-            </Button>{" "}
+            </Button>
+            <Button>
+              <label
+                htmlFor="file-upload"
+                style={{ height: "100%", width: "100%`" }}
+              >
+                Load your own!
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept=".json"
+                  disabled={isLoading}
+                  // style={{ visibility: "hidden"}}
+                  style={{ display: "none" }}
+                  onChange={handleLoadFile}
+                />
+              </label>
+            </Button>
+            <Button disabled={!notes.length} onClick={handleExportFile}>
+              Export your song
+            </Button>
             <div
               style={{
                 display: "flex",
@@ -206,8 +243,12 @@ function App() {
 
           <div className="extras-block">
             <h3>Misc</h3>
-            <button onClick={() => loadDataUri(mario)}>Play mario</button>
-            <button onClick={() => loadDataUri(zelda)}>Play Zelda :DD</button>
+            <Button onClick={() => loadDataUri(mario)}>Play Mario</Button>
+            <Button onClick={() => loadDataUri(zelda)}>Play Zelda!!!</Button>
+            <b>
+              These aren't related to WASM functionality, rather cool things I
+              found while researching MIDI files
+            </b>
           </div>
         </div>
         <Footer />

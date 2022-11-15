@@ -125,7 +125,7 @@ function App() {
   function handleGenerateRandomMidi() {
     setIsLoading(true);
     let benchMark = performance.now();
-    let notes = wasm.generate_random_midi(999990) as Note[];
+    let notes = wasm.generate_random_midi(300) as Note[];
     let diff = performance.now() - benchMark;
     console.debug(`WASM took ${diff}ms`);
     console.debug(notes);

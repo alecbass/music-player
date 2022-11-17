@@ -131,7 +131,7 @@ function App() {
     console.debug(notes);
 
     benchMark = performance.now();
-    notes = generateRandomMidi(999990);
+    notes = generateRandomMidi(300);
     diff = performance.now() - benchMark;
     console.debug(`JS took ${diff}ms`);
     console.debug(notes);

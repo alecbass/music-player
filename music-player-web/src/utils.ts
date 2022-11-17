@@ -31,7 +31,7 @@ export function generateRandomMidi(length: number): Note[] {
     return {
       id: value,
       key: allNotes[Math.floor(Math.random() * allNotes.length)],
-      length: Math.floor(Math.random() * 5000),
+      length: Math.floor(Math.random() * 500),
     };
   }
 
